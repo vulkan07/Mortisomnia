@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_lantern",
+  "textures": {
+    "lantern": "mortisomnia:block/unlit_lantern"
+  }
+}

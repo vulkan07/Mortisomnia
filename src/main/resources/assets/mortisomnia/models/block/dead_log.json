@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "mortisomnia:block/dead_log_top",
+    "side": "mortisomnia:block/dead_log"
+  }
+}

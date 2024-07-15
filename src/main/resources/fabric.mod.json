@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "mortisomnia",
+  "version": "${version}",
+  "name": "Mortisomnia",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/barni/Mortisomnia"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/mortisomnia/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.barni.mortisomnia.client.MortisomniaClient"
+    ],
+    "main": [
+      "me.barni.mortisomnia.Mortisomnia"
+    ]
+  },
+  "mixins": [
+    "mortisomnia.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "item.mortisomnia.sapphire": "Zafír",
+  "item.mortisomnia.sapphire_ore": "Zafírérc",
+  "item.mortisomnia.ecto_fragment": "Lélekcse",
+  "item.mortisomnia.purified_ecto_fragment": "Szent léleksce",
+  "item.mortisomnia.captured_light": "Fénykapszula",
+  "item.mortisomnia.dead_leaves": "Halott levelek",
+  "item.mortisomnia.dead_log": "Halott farönk",
+  "item.mortisomnia.unlit_lantern": "Kialudt lámpás",
+
+  "block.mortisomnia.sapphire_ore": "Zafírérc",
+  "block.mortisomnia.dead_leaves": "Halott levelek",
+  "block.mortisomnia.dead_log": "Halott farönk",
+  "block.mortisomnia.unlit_lantern": "Kialudt lámpás"
+}

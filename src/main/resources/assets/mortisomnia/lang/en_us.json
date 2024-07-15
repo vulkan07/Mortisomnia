@@ -1,0 +1,15 @@
+{
+  "item.mortisomnia.sapphire": "Sapphire",
+  "item.mortisomnia.sapphire_ore": "Sapphire Ore",
+  "item.mortisomnia.ecto_fragment": "Ecto Fragment",
+  "item.mortisomnia.purified_ecto_fragment": "Purified Ecto Fragment",
+  "item.mortisomnia.captured_light": "Captured Light",
+  "item.mortisomnia.dead_leaves": "Dead Leaves",
+  "item.mortisomnia.dead_log": "Dead Log",
+  "item.mortisomnia.unlit_lantern": "Unlit Lantern",
+
+  "block.mortisomnia.sapphire_ore": "Sapphire Ore",
+  "block.mortisomnia.dead_leaves": "Dead Leaves",
+  "block.mortisomnia.dead_log": "Dead Log",
+  "block.mortisomnia.unlit_lantern": "Unlit Lantern"
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "hanging=false": {
+      "model": "mortisomnia:block/unlit_lantern"
+    },
+    "hanging=true": {
+      "model": "mortisomnia:block/unlit_lantern_hanging"
+    }
+  }
+}

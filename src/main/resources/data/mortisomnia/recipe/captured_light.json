@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "tags": [ "crafting_table" ],
+    "pattern": [
+      "SGS",
+      "GPG",
+      "SGS"
+    ],
+    "key": {
+      "S": {"item": "mortisomnia:sapphire"},
+      "G": {"item": "minecraft:glowstone"},
+      "P": {"item": "mortisomnia:purified_ecto_fragment"}
+    },
+    "result": {
+      "item": "mortisomnia:captured_light"
+    }
+}
