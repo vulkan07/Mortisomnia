@@ -2,7 +2,6 @@ package me.barni.mortisomnia;
 
 
 import me.barni.mortisomnia.datagen.MortisomniaBlocks;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -21,15 +20,17 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import static me.barni.mortisomnia.Mortisomnia.RANDOM;
 
 public abstract class Utils {
     private static final Random RANDOM = Mortisomnia.RANDOM;
+
+    public static boolean isFullMoon(World world) {
+        return world.getMoonPhase()==0;
+    }
 
     public static NbtCompound getPlayerPersistentData(PlayerEntity player) {
         return ((IEntityNBTSaver) player).mortisomnia$getPersistentData();
@@ -374,8 +375,10 @@ public abstract class Utils {
             x = RANDOM.nextInt(20)-10;
             y = RANDOM.nextInt(20);
             z = RANDOM.nextInt(20)-10;
-            if (world.getLightLevel(LightType.SKY,pos.add(x,y,z)) > 0)
+            if (world.getLightLevel(LightType.SKY,pos.add(x,y,z)) > 0) {
+                Mortisomnia.LOGGER.info("CAve failed because skylight");
                 return 0;
+            }
             lightScore -= world.getLightLevel(LightType.BLOCK, pos.add(x,y,z));
         }
         BlockState state;

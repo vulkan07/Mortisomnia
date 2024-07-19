@@ -7,6 +7,7 @@
     "EntityNBTSaveMixin"
   ],
   "client": [
+    "MoonPhaseMixin"
   ],
   "injectors": {
     "defaultRequire": 1

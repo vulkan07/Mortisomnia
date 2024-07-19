@@ -1,24 +1,19 @@
 package me.barni.mortisomnia.item;
 
-import me.barni.mortisomnia.Mortisomnia;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import me.barni.mortisomnia.Utils;
+import me.barni.mortisomnia.datagen.MortisomniaParticles;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
@@ -30,10 +25,22 @@ public class EctoFragmentItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-/*
-        if(!world.isClient() && Utils.isPlayerInCave(user) > 90)
-            user.sendMessage(Text.literal("Something terrible is approaching"), false);
-
+        if(!world.isClient() && Utils.isFullMoon(world))
+            user.sendMessage(Text.literal("[Utils] Full Moon"), false);
+        if(!world.isClient()) {
+            StringBuilder s = new StringBuilder("[Utils] Cave: ");
+            int result, sum=0;
+            for (int i = 0; i < 5; i++) {
+                result = Utils.isPlayerInCave(user);
+                s.append(result);
+                if (i != 4)
+                    s.append(", ");
+                sum += result;
+            }
+            s.append("  #");
+            s.append(sum/5);
+            user.sendMessage(Text.literal(s.toString()), false);
+        }
 
         // Default particle pos is the player's look direction*1
         Vec3d particlePos = user.getPos().add(user.getRotationVec(1).add(0, 1.7, 0));
@@ -60,14 +67,9 @@ public class EctoFragmentItem extends Item {
             world.playSound(null, particlePos.x, particlePos.y, particlePos.z,
                     SoundEvents.ENTITY_ALLAY_DEATH, SoundCategory.NEUTRAL, .25f, 1.2f);
 
-            //ServerPlayNetworking.send((ServerPlayerEntity) user, Mortisomnia.CAMSHAKE_PACKET, PacketByteBufs.empty());
-
-          //  ServerPlayNetworking.send((ServerPlayerEntity) user, Mortisomnia.CAMSHAKE_PACKET,
-          //          PacketByteBufs.create().writeFloat(.5f).writeFloat(.01f).writeFloat(.3f));
-
         }
-*/
-        user.getStackInHand(hand).decrement(1);
+
+        user.getStackInHand(hand).decrementUnlessCreative(1, user);
         return TypedActionResult.success(user.getStackInHand(hand));
     }
 }
