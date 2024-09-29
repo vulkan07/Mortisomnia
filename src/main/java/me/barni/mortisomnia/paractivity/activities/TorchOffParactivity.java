@@ -2,17 +2,12 @@ package me.barni.mortisomnia.paractivity.activities;
 
 import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
-import me.barni.mortisomnia.datagen.MortisomniaSounds;
 import me.barni.mortisomnia.paractivity.ParaController;
 import me.barni.mortisomnia.paractivity.ParaResult;
 import me.barni.mortisomnia.paractivity.Paractivity;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
@@ -78,7 +73,7 @@ public class TorchOffParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.TORCH_OFF_ACTIVITY;
+        return Paractivity.TORCH_OFF;
     }
 
 }

@@ -13,12 +13,22 @@ public class MortisomniaSounds {
     public static SoundEvent USE_CAPTURED_LIGHT;
     public static SoundEvent TORCHBREAK_DRONE;
     public static SoundEvent SPOOK_GENERAL;
+    public static SoundEvent GHOST;
+    public static SoundEvent BULB;
+    public static SoundEvent CAVE_MONSTER;
+
+    private static SoundEvent register(String name) {
+        return Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, name), SoundEvent.of(Identifier.of(MOD_ID, name)));
+    }
 
     public static void registerSounds() {
-        SOUL_SFX = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "soul1"), SoundEvent.of(Identifier.of(MOD_ID, "soul1")));
-        USE_CAPTURED_LIGHT = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "use_captured_light"), SoundEvent.of(Identifier.of(MOD_ID, "use_captured_light")));
-        TORCHBREAK_DRONE = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "torchbreak_drone"), SoundEvent.of(Identifier.of(MOD_ID, "torchbreak_drone")));
-        SPOOK_GENERAL = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "spook_general"), SoundEvent.of(Identifier.of(MOD_ID, "spook_general")));
+        SOUL_SFX = register("soul1");
+        USE_CAPTURED_LIGHT = register("use_captured_light");
+        TORCHBREAK_DRONE = register("torchbreak_drone");
+        SPOOK_GENERAL = register("spook_general");
+        GHOST = register("ghost");
+        BULB = register("bulb");
+        CAVE_MONSTER = register("cave_monster");
     }
 
 }

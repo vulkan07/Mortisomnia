@@ -4,7 +4,6 @@ import me.barni.mortisomnia.datagen.MortisomniaParticles;
 import me.barni.mortisomnia.datagen.MortisomniaSounds;
 import me.barni.mortisomnia.paractivity.ParaController;
 import me.barni.mortisomnia.paractivity.activities.CapturedLightParactivity;
-import me.barni.mortisomnia.paractivity.activities.LightExtinguishParactivity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,7 +32,6 @@ public class CapturedLightItem extends Item {
             if (world.isClient()) {
                 return TypedActionResult.pass(user.getStackInHand(hand));
             }
-            ParaController.getInstance().addParactivity(new LightExtinguishParactivity(user), true, false);
             ServerWorld serverWorld = (ServerWorld) world;
             // PARTICLE
             serverWorld.spawnParticles(

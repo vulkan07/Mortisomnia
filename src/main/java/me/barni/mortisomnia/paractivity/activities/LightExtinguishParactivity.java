@@ -1,15 +1,11 @@
 package me.barni.mortisomnia.paractivity.activities;
 
-import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
 import me.barni.mortisomnia.datagen.MortisomniaSounds;
 import me.barni.mortisomnia.paractivity.ParaController;
 import me.barni.mortisomnia.paractivity.ParaResult;
 import me.barni.mortisomnia.paractivity.Paractivity;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -21,7 +17,7 @@ public class LightExtinguishParactivity extends Paractivity {
 
 
     private final int DELAY_AFTER_SCAN = 80; //
-    private final int MIN_LIGHT_BLOCKS = 50; // if number of found blocks is less than this, cancel event
+    private final int MIN_LIGHT_BLOCKS = 70; // if number of found blocks is less than this, cancel event
     private final int MAX_SCAN_PER_TICK = 32000;
     private final int SCAN_VERTICAL = 24; // goes in both direcctions, so x will scan 2x+1 blocks
     private final int SCAN_HORIZONTAL = 128; // goes in both direcctions, so x will scan 2x+1 blocks
@@ -43,10 +39,8 @@ public class LightExtinguishParactivity extends Paractivity {
         for (int i = 0; i < MAX_SCAN_PER_TICK; i++) {
             var pos = blockScanner.getNextPos();
             if (pos == null) { // scan ended
-                Mortisomnia.LOGGER.warn("[TorchBreakActivity] found {} lights", lightBlockStack.size());
                 if (lightBlockStack.size() < MIN_LIGHT_BLOCKS) {
                     cancel();
-                    Mortisomnia.LOGGER.info("[TorchBreakActivity] too few lights, cancelled");
                 }
                 stage++;
                 return;
@@ -132,7 +126,7 @@ public class LightExtinguishParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.LIGHT_EXTINGUISH_ACTIVITY;
+        return Paractivity.LIGHT_EXTINGUISH;
     }
 
 }

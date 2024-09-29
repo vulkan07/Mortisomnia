@@ -1,6 +1,5 @@
 package me.barni.mortisomnia.paractivity.activities;
 
-import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
 import me.barni.mortisomnia.datagen.MortisomniaSounds;
 import me.barni.mortisomnia.paractivity.ParaController;
@@ -8,12 +7,7 @@ import me.barni.mortisomnia.paractivity.ParaResult;
 import me.barni.mortisomnia.paractivity.Paractivity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
-import org.joml.Vector3f;
 
 import static me.barni.mortisomnia.Mortisomnia.RANDOM;
 
@@ -59,6 +53,6 @@ public class SpookSoundParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.SPOOK_SOUND_ACTIVITY;
+        return Paractivity.SPOOK_SOUND;
     }
 }

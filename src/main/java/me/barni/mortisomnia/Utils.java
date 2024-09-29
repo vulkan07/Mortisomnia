@@ -35,6 +35,12 @@ public abstract class Utils {
     public static NbtCompound getPlayerPersistentData(PlayerEntity player) {
         return ((IEntityNBTSaver) player).mortisomnia$getPersistentData();
     }
+    public static Vec3d randomPointOnCircle(float radius) {
+        double angle = 2* Math.PI * RANDOM.nextDouble();
+        double x = radius * Math.cos(angle);
+        double y = radius * Math.sin(angle);
+       return new Vec3d(x,0,y);
+    }
 
     public static Vec3d randomPointInSphere(float maxRadius) {
         // Generate a random radius within the specified bounds
@@ -108,7 +114,9 @@ public abstract class Utils {
                 blockState.isOf(Blocks.CANDLE) ||
                 blockState.isOf(Blocks.CAMPFIRE) ||
                 blockState.isOf(Blocks.LAVA) ||
+                blockState.isOf(Blocks.GLOW_LICHEN) ||
                 blockState.isOf(Blocks.FIRE) ||
+                blockState.isOf(Blocks.REDSTONE_LAMP) ||
                 blockState.isOf(Blocks.GLOWSTONE) ||
                 blockState.isOf(Blocks.END_ROD) ||
                 blockState.isOf(Blocks.JACK_O_LANTERN);
@@ -120,6 +128,7 @@ public abstract class Utils {
                 blockState.isOf(MortisomniaBlocks.UNLIT_LANTERN) ||
                 blockState.isOf(Blocks.CANDLE) ||
                 blockState.isOf(Blocks.CAMPFIRE) ||
+                blockState.isOf(Blocks.REDSTONE_LAMP) ||
                 blockState.isOf(Blocks.CARVED_PUMPKIN);
     }
 
@@ -199,7 +208,10 @@ public abstract class Utils {
         if (block.isOf(Blocks.LAVA))
             return Blocks.COBBLESTONE.getDefaultState();
 
-        if (block.isOf(Blocks.GLOWSTONE) || block.isOf(Blocks.END_ROD) || block.isOf(Blocks.FIRE))
+        if (block.isOf(Blocks.REDSTONE_LAMP))
+            return block.with(Properties.LIT, false);
+
+        if (block.isOf(Blocks.GLOWSTONE) || block.isOf(Blocks.END_ROD) || block.isOf(Blocks.FIRE) || block.isOf(Blocks.GLOW_LICHEN))
             return Blocks.AIR.getDefaultState();
 
         return null;
@@ -220,6 +232,9 @@ public abstract class Utils {
             return Blocks.LANTERN.getDefaultState().with(Properties.HANGING, block.get(Properties.HANGING));
 
         if (block.isOf(Blocks.CANDLE) || block.isOf(Blocks.CAMPFIRE))
+            return block.with(Properties.LIT, true);
+
+        if (block.isOf(Blocks.REDSTONE_LAMP))
             return block.with(Properties.LIT, true);
 
         return null;
@@ -375,10 +390,8 @@ public abstract class Utils {
             x = RANDOM.nextInt(20)-10;
             y = RANDOM.nextInt(20);
             z = RANDOM.nextInt(20)-10;
-            if (world.getLightLevel(LightType.SKY,pos.add(x,y,z)) > 0) {
-                Mortisomnia.LOGGER.info("CAve failed because skylight");
+            if (world.getLightLevel(LightType.SKY,pos.add(x,y,z)) > 0)
                 return 0;
-            }
             lightScore -= world.getLightLevel(LightType.BLOCK, pos.add(x,y,z));
         }
         BlockState state;
@@ -428,6 +441,7 @@ public abstract class Utils {
             if (reset) this.time = this.max;
         }
 
+        /** Returns true if timer is firing **/
         public boolean tick() {
             this.time--;
             if (this.time < 1) {

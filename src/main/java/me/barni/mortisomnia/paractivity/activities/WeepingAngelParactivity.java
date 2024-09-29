@@ -1,7 +1,7 @@
 package me.barni.mortisomnia.paractivity.activities;
 
-import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
+import me.barni.mortisomnia.datagen.MortisomniaEntities;
 import me.barni.mortisomnia.entity.WeepingAngelEntity;
 import me.barni.mortisomnia.paractivity.ParaController;
 import me.barni.mortisomnia.paractivity.ParaResult;
@@ -21,7 +21,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import static me.barni.mortisomnia.Mortisomnia.RANDOM;
-import static me.barni.mortisomnia.datagen.MortisomniaEntities.WEEPING_ANGEL;
 
 
 public class WeepingAngelParactivity extends Paractivity {
@@ -110,8 +109,7 @@ public class WeepingAngelParactivity extends Paractivity {
             BlockPos pos = findRandomSpawnPos();
             if (pos == null) continue;
 
-            WeepingAngelEntity e = WEEPING_ANGEL.create(world);
-            if (e == null) continue;
+            WeepingAngelEntity e = new WeepingAngelEntity(MortisomniaEntities.WEEPING_ANGEL,world);
 
             e.setPosition(Vec3d.of(pos).add(.5,0,.5));
             e.setAngelYaw(RANDOM.nextInt(8)*45);
@@ -129,6 +127,6 @@ public class WeepingAngelParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.WEEPING_ANGEL_ACTIVITY;
+        return Paractivity.WEEPING_ANGEL;
     }
 }

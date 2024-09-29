@@ -91,7 +91,7 @@ public class CapturedLightParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.CAPTURED_LIGHT_ACTIVITY;
+        return Paractivity.CAPTURED_LIGHT;
     }
 
 }

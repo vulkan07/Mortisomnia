@@ -6,6 +6,7 @@ import me.barni.mortisomnia.paractivity.ParaResult;
 import me.barni.mortisomnia.paractivity.Paractivity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
@@ -23,6 +24,7 @@ public class ScareCrowParactivity extends Paractivity {
 
     private static final int SEARCH_HORIZONTAL = 32;
     private static final int SEARCH_VERTICAL = 8;
+
 
     private Stack<BlockPos> crops;
 
@@ -75,8 +77,11 @@ public class ScareCrowParactivity extends Paractivity {
         if(crops.isEmpty())
             return end();
 
-        if (!delay)
-            world.breakBlock(crops.pop(), RANDOM.nextInt(3)==0);
+        if (!delay) {
+            BlockPos pos = crops.pop();
+            world.setBlockState(pos, world.getBlockState(pos).withIfExists(Properties.AGE_7, 3)); // don't give wheat
+            world.breakBlock(pos, RANDOM.nextInt(5) == 0);
+        }
         delay = !delay;
 
 
@@ -90,6 +95,6 @@ public class ScareCrowParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.SCARE_CROW_PARACTIVITY;
+        return Paractivity.SCARECROW;
     }
 }

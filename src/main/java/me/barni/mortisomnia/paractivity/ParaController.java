@@ -63,10 +63,11 @@ public class ParaController {
 
         // 1. By progress of time
         int day = (int) (world.getTimeOfDay() / 24000);
-        if (day > 2) {
-            v = RANDOM.nextInt(day / 2);
-            Mortisomnia.LOGGER.warn("+time: {}", v);
-            score += day;
+        if (day > 0) { // no haunt on first day
+            v = RANDOM.nextInt((day+1) / 2);
+            if( v > 0)
+                Mortisomnia.LOGGER.warn("+time: {}", v);
+            score += v;
         }
         // 2. Cave score
         int cave = Utils.isPlayerInCave(player);
@@ -199,10 +200,12 @@ public class ParaController {
                         switch (choice) {
                             case 0 -> a = new SpookSoundParactivity(player);
                             case 1 -> a = new DoorParactivity(player);
-                            case 2 -> a = new TorchOffParactivity(player);
-                            case 3 -> a = new ScareCrowParactivity(player);
-                            case 4 -> a = new WeepingAngelParactivity(player);
-                            case 5 -> a = new LightExtinguishParactivity(player);
+                            case 2 -> a = new DoorToggleParactivity(player);
+                            case 3 -> a = new TorchOffParactivity(player);
+                            case 4 -> a = new ScareCrowParactivity(player);
+                            case 5 -> a = new WeepingAngelParactivity(player);
+                            case 6 -> a = new LightExtinguishParactivity(player);
+                            case 7 -> a = new LightFlickerParactivity(player);
                         }
                         if (a != null)
                             addHandledParactivity(a, false, true);

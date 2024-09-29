@@ -1,18 +1,18 @@
 package me.barni.mortisomnia.paractivity;
 
 public class ParaResult {
-    public static enum Type {SUCCESS, FAIL, FINISHED};
+    public enum Type {SUCCESS, FAIL, FINISHED}
     private final Type type;
     private final String message;
 
     public static ParaResult success() {
-        return new ParaResult(Type.SUCCESS, null);
+        return new ParaResult(Type.SUCCESS, "");
     }
     public static ParaResult fail(String reason) {
         return new ParaResult(Type.FAIL, reason);
     }
     public static ParaResult end() {
-        return new ParaResult(Type.FINISHED, null);
+        return new ParaResult(Type.FINISHED, "");
     }
     public static ParaResult end(String message) {
         return new ParaResult(Type.FINISHED, message);

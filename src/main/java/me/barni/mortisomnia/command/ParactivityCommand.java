@@ -65,13 +65,18 @@ public class ParactivityCommand {
     private static String[] listText = {
         "Available Paractivities:",
         " - WeepingAngel",
+        " - Gazer",
         " - LightExtinguish",
-        " - Torchoff",
+        " - LightFlicker",
         " - CapturedLight",
+        " - Torchoff",
         " - SpookSound",
         " - Door",
+        " - DoorToggle",
         " - ScareCrow",
-        " - FertilizerCapsule"
+        " - FertilizerCapsule",
+        " - Gazer",
+        " - Creeper"
     };
 
     private static void list(PlayerEntity player) {
@@ -91,13 +96,18 @@ public class ParactivityCommand {
         switch (name.toLowerCase()) {
             case "weepingangel" -> a = new WeepingAngelParactivity(player);
             case "lightextinguish" -> a = new LightExtinguishParactivity(player);
+            case "lightflicker" -> a = new LightFlickerParactivity(player);
             case "capturedlight" -> a = new CapturedLightParactivity(player);
             case "spooksound" -> a = new SpookSoundParactivity(player);
             case "torchoff" -> a = new TorchOffParactivity(player);
             case "door" -> a = new DoorParactivity(player);
+            case "doortoggle" -> a = new DoorToggleParactivity(player);
             case "scarecrow" -> a = new ScareCrowParactivity(player);
             case "fertilizercapsule" -> a = new FertilizerCapsuleParactivity(player);
             case "killfoliage" -> a = new KillFoliageParactivity(player);
+            case "gazer" -> a = new GazerParactivity(player);
+            case "creeper" -> a = new CreeperParactivity(player);
+            case "cave_spook" -> a = new CaveSpookParactivity(player);
             default -> { return "Unknown type: " + name; }
         }
         var result = ParaController.getInstance().addParactivity(a, force, false);

@@ -4,10 +4,8 @@ import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
 import me.barni.mortisomnia.paractivity.ParaResult;
 import me.barni.mortisomnia.paractivity.Paractivity;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.CropBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -115,7 +113,7 @@ public class FertilizerCapsuleParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.FERTILIZER_CAPSULE_PARACTIVITY;
+        return Paractivity.FERTILIZER_CAPUSE;
     }
 
 }

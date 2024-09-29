@@ -11,5 +11,9 @@
   "block.mortisomnia.sapphire_ore": "Zafírérc",
   "block.mortisomnia.dead_leaves": "Halott levelek",
   "block.mortisomnia.dead_log": "Halott farönk",
-  "block.mortisomnia.unlit_lantern": "Kialudt lámpás"
+  "block.mortisomnia.unlit_lantern": "Kialudt lámpás",
+
+  "entity.mortisomnia.weeping_angel": "Síróangyal",
+  "entity.mortisomnia.gazer": "Figyelő",
+  "entity.mortisomnia.plague_doctor": "A Pestisdoktor"
 }

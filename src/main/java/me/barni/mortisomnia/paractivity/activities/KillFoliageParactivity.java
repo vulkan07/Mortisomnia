@@ -5,12 +5,9 @@ import me.barni.mortisomnia.Utils;
 import me.barni.mortisomnia.paractivity.ParaResult;
 import me.barni.mortisomnia.paractivity.Paractivity;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
@@ -112,7 +109,7 @@ public class KillFoliageParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.KILL_FOLIAGE_PARACTIVITY;
+        return Paractivity.KILL_FOLIAGE;
     }
 
 }

@@ -2,11 +2,11 @@ package me.barni.mortisomnia.entity;
 
 import me.barni.mortisomnia.Mortisomnia;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
@@ -33,7 +33,7 @@ public class GazerEntity extends MobEntity {
 
             serverWorld.spawnParticles(ParticleTypes.SMOKE, this.getPos().x, this.getPos().y+1f, this.getPos().z, 12, .25, 1, .25, 0);
 //            serverWorld.spawnParticles(MortisomniaParticles.ECTOPLASM, this.getPos().x, this.getPos().y+1f, this.getPos().z, 12, .1, 1, .1, 1);
-            serverWorld.playSound(null, this.getBlockPos(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.NEUTRAL, .8f, 1f);
+            serverWorld.playSound(null, this.getBlockPos(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.NEUTRAL, .7f, 1f);
 
             this.discard();
         }
@@ -91,7 +91,11 @@ public class GazerEntity extends MobEntity {
     @Override
     public boolean damage(DamageSource damageSource, float amount) {
         triggered = true;
-        return false;
+        return super.damage(damageSource,amount);
+    }
+    @Override
+    public boolean isInvulnerableTo(DamageSource damageSource) {
+        return !damageSource.isOf(DamageTypes.GENERIC_KILL);
     }
 
     public GazerEntity(EntityType<? extends MobEntity> entityType, World world) {

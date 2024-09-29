@@ -5,8 +5,6 @@ import me.barni.mortisomnia.Utils;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -42,7 +40,6 @@ public class WeepingAngelAI {
     }
 
     private boolean isValidPlaceToMove(World world, BlockPos pos) {
-        world.getMoonPhase();
         //dont move too close to other angels
         for (var e : world.getOtherEntities(entity, new Box(pos).expand(1))) {
             if (e instanceof WeepingAngelEntity) return false;

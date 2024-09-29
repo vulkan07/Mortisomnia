@@ -1,8 +1,31 @@
 {
+  "bulb": {
+    "sounds": [
+      {
+        "name": "mortisomnia:bulb",
+        "attenuation_distance": 6
+      }
+    ]
+  },
   "soul1": {
     "sounds": [
       {
         "name": "mortisomnia:soul1",
+        "stream": true
+      }
+    ]
+  },
+  "ghost": {
+    "sounds": [
+      {
+        "name": "mortisomnia:ghost"
+      }
+    ]
+  },
+  "cave_monster": {
+    "sounds": [
+      {
+        "name": "mortisomnia:cave_monster",
         "stream": true
       }
     ]

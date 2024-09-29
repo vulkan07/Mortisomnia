@@ -4,7 +4,8 @@
   "package": "me.barni.mortisomnia.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "EntityNBTSaveMixin"
+    "EntityNBTSaveMixin",
+    "SheepShearDropMixin"
   ],
   "client": [
     "MoonPhaseMixin"

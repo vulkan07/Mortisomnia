@@ -5,15 +5,20 @@ import net.minecraft.world.World;
 
 public abstract class Paractivity implements IParactivity {
 
-    public static final String CAPTURED_LIGHT_ACTIVITY = "CapturedLight";
-    public static final String SPOOK_SOUND_ACTIVITY = "SpookSound";
-    public static final String TORCH_OFF_ACTIVITY = "TorchOff";
-    public static final String LIGHT_EXTINGUISH_ACTIVITY = "LightExtinguish";
-    public static final String WEEPING_ANGEL_ACTIVITY = "WeepingAngel";
-    public static final String DOOR_ACTIVITY = "Door";
-    public static final String SCARE_CROW_PARACTIVITY = "ScareCrow";
-    public static final String FERTILIZER_CAPSULE_PARACTIVITY = "FertilizerCapsule";
-    public static final String KILL_FOLIAGE_PARACTIVITY = "KillFoliage";
+    public static final String CAPTURED_LIGHT = "CapturedLight";
+    public static final String SPOOK_SOUND = "SpookSound";
+    public static final String TORCH_OFF = "TorchOff";
+    public static final String LIGHT_EXTINGUISH = "LightExtinguish";
+    public static final String LIGHT_FLICKER = "LightFlicker";
+    public static final String WEEPING_ANGEL = "WeepingAngel";
+    public static final String DOOR_FLIP = "DoorFlip";
+    public static final String DOOR_TOGGLE = "DoorToggle";
+    public static final String SCARECROW = "ScareCrow";
+    public static final String FERTILIZER_CAPUSE = "FertilizerCapsule";
+    public static final String KILL_FOLIAGE = "KillFoliage";
+    public static final String GAZER = "Gazer";
+    public static final String CREEPER = "Creeper";
+    public static final String CAVE_SPOOK = "CaveSpook";
     /*
     * TO ADD AN ACTIVITY FULLY:
     * 1. register its name here

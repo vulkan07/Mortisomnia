@@ -5,21 +5,15 @@ import me.barni.mortisomnia.Utils;
 import me.barni.mortisomnia.mixin.TrapdoorBlockInvoker;
 import me.barni.mortisomnia.paractivity.ParaResult;
 import me.barni.mortisomnia.paractivity.Paractivity;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LightningEntity;
-import net.minecraft.entity.MovementType;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.Stack;
 
@@ -125,7 +119,7 @@ public class DoorParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.DOOR_ACTIVITY;
+        return Paractivity.DOOR_FLIP;
     }
 
 }

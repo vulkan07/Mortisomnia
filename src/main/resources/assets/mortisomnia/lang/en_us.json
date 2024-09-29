@@ -11,5 +11,9 @@
   "block.mortisomnia.sapphire_ore": "Sapphire Ore",
   "block.mortisomnia.dead_leaves": "Dead Leaves",
   "block.mortisomnia.dead_log": "Dead Log",
-  "block.mortisomnia.unlit_lantern": "Unlit Lantern"
+  "block.mortisomnia.unlit_lantern": "Unlit Lantern",
+
+  "entity.mortisomnia.weeping_angel": "Weeping Angel",
+  "entity.mortisomnia.gazer": "Gazer",
+  "entity.mortisomnia.plague_doctor": "The Plague Doctor"
 }
