@@ -1,10 +1,8 @@
 package me.barni.mortisomnia.entity;
 
+import me.barni.mortisomnia.Mortisomnia;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -17,11 +15,49 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
 public class WeepingAngelEntity extends MobEntity {
+
+    public enum Variant {Stone, DeepSlate}
+    public enum Pose {Crying, Looking, Attacking}
+
+    private Variant variant = Variant.Stone;
+    private Pose pose = Pose.Crying;
+
     private final WeepingAngelAI ai = new WeepingAngelAI(this);
+
+    public Pose getAngelPose() {
+        if (ai.phase == 1)
+            return Pose.Looking;
+        if (ai.phase == 2)
+            return Pose.Attacking;
+        return Pose.Crying; //  0
+    }
+
+    // idk why it needs this
+    public WeepingAngelEntity(EntityType<? extends MobEntity> entityType, World world) {
+        super(entityType, world);
+        if (this.getY() < -5)
+            this.variant = Variant.DeepSlate;
+    }
+
+    // become deepslate if spawns below -5Y
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
+
+
+//        if (this.getY() < -5)
+            this.variant = Variant.DeepSlate;
+
+        return super.initialize(world, difficulty, spawnReason, entityData);
+    }
+
 
     //TODO THIS IS HORRIBLE!!! FIX THE STUPID ROTATION
     public void setAngelYaw(float yaw) {
@@ -35,7 +71,9 @@ public class WeepingAngelEntity extends MobEntity {
         super.tick();
         if (!isRemoved() && isAlive())
             ai.update(getWorld().isClient());
+
     }
+
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
@@ -55,6 +93,18 @@ public class WeepingAngelEntity extends MobEntity {
             ai.pitch = getPitch();
             ai.yaw = getYaw();
         } catch (Exception ignored) {}
+    }
+
+    public Identifier getTexture() {
+        if (this.variant == Variant.DeepSlate)
+             return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel_deepslate.png");
+
+         return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel.png");
+         /*
+        switch (this.variant) {
+            case DeepSlate: return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel_deepslate.png");
+            default: return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel.png");
+        }*/
     }
 
     @Override
@@ -96,9 +146,6 @@ public class WeepingAngelEntity extends MobEntity {
         return super.damage(damageSource, amount);
     }
 
-    public WeepingAngelEntity(EntityType<? extends MobEntity> entityType, World world) {
-        super(entityType, world);
-    }
 
     public static DefaultAttributeContainer.Builder createWeepingAngelAttributes() {
         return MobEntity.createMobAttributes()

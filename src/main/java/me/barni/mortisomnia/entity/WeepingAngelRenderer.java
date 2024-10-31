@@ -1,6 +1,5 @@
 package me.barni.mortisomnia.entity;
 
-import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.datagen.MortisomniaEntities;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,6 +15,6 @@ public class WeepingAngelRenderer extends MobEntityRenderer<WeepingAngelEntity, 
 
     @Override
     public Identifier getTexture(WeepingAngelEntity entity) {
-        return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel.png");
+        return entity.getTexture();
     }
 }

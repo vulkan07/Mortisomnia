@@ -116,6 +116,8 @@ public abstract class Utils {
                 blockState.isOf(Blocks.LAVA) ||
                 blockState.isOf(Blocks.GLOW_LICHEN) ||
                 blockState.isOf(Blocks.FIRE) ||
+                blockState.isOf(Blocks.CAVE_VINES_PLANT) ||
+                blockState.isOf(Blocks.CAVE_VINES) ||
                 blockState.isOf(Blocks.REDSTONE_LAMP) ||
                 blockState.isOf(Blocks.GLOWSTONE) ||
                 blockState.isOf(Blocks.END_ROD) ||
@@ -207,6 +209,11 @@ public abstract class Utils {
 
         if (block.isOf(Blocks.LAVA))
             return Blocks.COBBLESTONE.getDefaultState();
+
+        if (block.isOf(Blocks.CAVE_VINES_PLANT))
+            return block.with(Properties.BERRIES, false);
+        if (block.isOf(Blocks.CAVE_VINES))
+            return block.with(Properties.BERRIES, false);
 
         if (block.isOf(Blocks.REDSTONE_LAMP))
             return block.with(Properties.LIT, false);

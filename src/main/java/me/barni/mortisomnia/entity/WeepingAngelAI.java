@@ -21,6 +21,15 @@ public class WeepingAngelAI {
     public static final int s_LOOK_ONLY = 1;
     public static final int s_AWAKE = 2;
 
+
+    public record Behavior(
+            boolean dormant,
+            boolean looking,
+            boolean moving,
+            boolean attacking,
+            int aggression
+    ) {}
+
     private final WeepingAngelEntity entity;
     private final Utils.TickTimer updateTimer = new Utils.TickTimer(20);
 
@@ -63,6 +72,7 @@ public class WeepingAngelAI {
             Vec3d finalPos = new Vec3d((int)pos.x, (int)pos.y, (int)pos.z);
             BlockPos blockPos = new BlockPos((int)finalPos.x, (int)finalPos.y, (int)finalPos.z);
 
+            // first check upwards to spawn higher than the player if possible
             for (int y = blockPos.getY();   y < blockPos.getY()+Y_STEP_RANGE;  y++) {
                 if (isValidPlaceToMove(entity.getWorld(), blockPos.up(blockPos.getY()-y))){
                     entity.setPosition(finalPos.add(.5, blockPos.getY()-y, .5));

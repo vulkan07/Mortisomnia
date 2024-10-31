@@ -64,7 +64,7 @@ public class ParaController {
         // 1. By progress of time
         int day = (int) (world.getTimeOfDay() / 24000);
         if (day > 0) { // no haunt on first day
-            v = RANDOM.nextInt((day+1) / 2);
+            v = (int)(RANDOM.nextInt(day)*.7);
             if( v > 0)
                 Mortisomnia.LOGGER.warn("+time: {}", v);
             score += v;
