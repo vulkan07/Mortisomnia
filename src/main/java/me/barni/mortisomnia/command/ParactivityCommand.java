@@ -76,7 +76,9 @@ public class ParactivityCommand {
         " - ScareCrow",
         " - FertilizerCapsule",
         " - Gazer",
-        " - Creeper"
+        " - Creeper",
+        " - KillFoliage",
+        " - CaveSpook",
     };
 
     private static void list(PlayerEntity player) {
@@ -107,7 +109,7 @@ public class ParactivityCommand {
             case "killfoliage" -> a = new KillFoliageParactivity(player);
             case "gazer" -> a = new GazerParactivity(player);
             case "creeper" -> a = new CreeperParactivity(player);
-            case "cave_spook" -> a = new CaveSpookParactivity(player);
+            case "cavespook" -> a = new CaveSpookParactivity(player);
             default -> { return "Unknown type: " + name; }
         }
         var result = ParaController.getInstance().addParactivity(a, force, false);

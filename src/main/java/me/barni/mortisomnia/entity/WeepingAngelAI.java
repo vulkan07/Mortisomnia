@@ -113,7 +113,7 @@ public class WeepingAngelAI {
             return;
 
 
-        if (entity.getWorld().isNight())
+        if (entity.getWorld().isNight()) {
             if (updateTimer.tick()) {
 
                 /*if (targetPlayer != null) {
@@ -122,14 +122,14 @@ public class WeepingAngelAI {
                     return;
                 }*/
 
-                if (entity.age > phaseDelay*(phase+1)) {
+                if (entity.age > phaseDelay * (phase + 1)) {
                     phase = Math.min(phase + 1, s_AWAKE); // Dont go above s_AWAKE
 //                    Mortisomnia.LOGGER.info("[WeepingAngel] Phase is now " + phase);
                 }
                 // Increment aggression by 1 or 0 every tick if phase is past s_LOOK_ONLY
                 if (phase > s_LOOK_ONLY) {
                     aggression += RANDOM.nextInt(31) == 0 ? 1 : 0;
- //                   Mortisomnia.LOGGER.info("[WeepingAngel] aggression is now " + aggression);
+                    //                   Mortisomnia.LOGGER.info("[WeepingAngel] aggression is now " + aggression);
                 }
 
                 // Return if not active yet or
@@ -153,8 +153,8 @@ public class WeepingAngelAI {
 
                     // Damage player if close enough
                     if (targetPlayer.getPos().distanceTo(entity.getPos()) < 1.25)
-                        targetPlayer.damage(entity.getWorld().getDamageSources().mobAttack(entity), RANDOM.nextInt(15,22));
-                    // Or move towards it
+                        targetPlayer.damage(entity.getWorld().getDamageSources().mobAttack(entity), RANDOM.nextInt(15, 22));
+                        // Or move towards it
                     else if (phase != s_LOOK_ONLY)
                         moveBehindPlayer();
 
@@ -165,11 +165,12 @@ public class WeepingAngelAI {
                     double e = target.y - vec3d.y;
                     double f = target.z - vec3d.z;
                     double g = Math.sqrt(d * d + f * f);
-                    pitch = MathHelper.wrapDegrees((float)(-(MathHelper.atan2(e, g) * 57.2957763671875)));
-                    yaw = MathHelper.wrapDegrees((float)(MathHelper.atan2(f, d) * 57.2957763671875) - 90.0f);
+                    pitch = MathHelper.wrapDegrees((float) (-(MathHelper.atan2(e, g) * 57.2957763671875)));
+                    yaw = MathHelper.wrapDegrees((float) (MathHelper.atan2(f, d) * 57.2957763671875) - 90.0f);
 
 
                 }
             }
+        }
     }
 }

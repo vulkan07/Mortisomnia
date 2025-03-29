@@ -5,9 +5,11 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EntityNBTSaveMixin",
-    "SheepShearDropMixin"
+    "SheepShearDropMixin",
+    "TrapdoorBlockInvoker"
   ],
   "client": [
+    "GameRendererSetPostProcessorMixin",
     "MoonPhaseMixin"
   ],
   "injectors": {

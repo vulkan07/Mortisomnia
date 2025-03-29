@@ -4,8 +4,10 @@ import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
 import me.barni.mortisomnia.paractivity.activities.*;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
@@ -102,6 +104,14 @@ public class ParaController {
     public void init() {
         Mortisomnia.LOGGER.info("ParaController initialized");
         ServerTickEvents.END_SERVER_TICK.register(this::tick);
+        ServerWorldEvents.UNLOAD.register(this::unload);
+    }
+
+    private void unload(MinecraftServer minecraftServer, ServerWorld serverWorld) {
+        for (Paractivity activity : activities) {
+            activity.cancel();
+        }
+        activities.clear();
     }
 
     public boolean addHandledParactivity(Paractivity activity, boolean force, boolean needsHaunt) {
@@ -206,6 +216,8 @@ public class ParaController {
                             case 5 -> a = new WeepingAngelParactivity(player);
                             case 6 -> a = new LightExtinguishParactivity(player);
                             case 7 -> a = new LightFlickerParactivity(player);
+                            case 8 -> a = new KillFoliageParactivity(player);
+                            case 9 -> a = new CaveSpookParactivity(player);
                         }
                         if (a != null)
                             addHandledParactivity(a, false, true);

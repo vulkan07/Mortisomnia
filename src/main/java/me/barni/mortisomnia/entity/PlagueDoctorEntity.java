@@ -19,6 +19,9 @@ import net.minecraft.world.World;
 public class PlagueDoctorEntity extends LivingEntity {
     private static final ItemStack stack = ItemStack.EMPTY;
 
+    private boolean triggered = false;
+
+
     public PlagueDoctorEntity(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
         setCustomNameVisible(false);
@@ -52,6 +55,7 @@ public class PlagueDoctorEntity extends LivingEntity {
         if (attacker instanceof PlayerEntity) {
             attacker.damage(attacker.getWorld().getDamageSources().mobAttack(this), 15);
         }
+        this.triggered = !triggered;
         return super.damage(source,amount);
     }
 
@@ -78,8 +82,16 @@ public class PlagueDoctorEntity extends LivingEntity {
     @Override
     public void tick() {
         var world = getWorld();
-        if (world instanceof ServerWorld && random.nextInt(3)==0) {
-            ((ServerWorld) world).spawnParticles(MortisomniaParticles.PLAGUE, getX(), getY()+1.3, getZ(), 1, 0.20, 0.30, 0.20 ,.2);
+        if (world instanceof ServerWorld w) {
+            if (random.nextInt(3)==0)
+                w.spawnParticles(MortisomniaParticles.PLAGUE, getX(), getY()+1.3, getZ(), 1, 0.20, 0.30, 0.20 ,.2);
+
+            if (age%2 == 0 && this.triggered) {
+                w.spawnParticles(MortisomniaParticles.MAGIC, getX() + 3, getY(), getZ(), 0, -3, age * 5, 0, 1);
+                w.spawnParticles(MortisomniaParticles.MAGIC, getX() + 3, getY(), getZ(), 0, -3, age * 5 + 180, 0, 1);
+                w.spawnParticles(MortisomniaParticles.MAGIC, getX() + 3, getY(), getZ(), 0, -3, age * 5 + 90, 0, 1);
+                w.spawnParticles(MortisomniaParticles.MAGIC, getX() + 3, getY(), getZ(), 0, -3, age * 5 + 270, 0, 1);
+            }
         }
         super.tick();
     }

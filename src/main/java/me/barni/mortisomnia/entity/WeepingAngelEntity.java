@@ -2,7 +2,9 @@ package me.barni.mortisomnia.entity;
 
 import me.barni.mortisomnia.Mortisomnia;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -18,17 +20,14 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class WeepingAngelEntity extends MobEntity {
 
-    public enum Variant {Stone, DeepSlate}
+    public enum Variant {None,Stone,DeepSlate}
     public enum Pose {Crying, Looking, Attacking}
 
-    private Variant variant = Variant.Stone;
+    private Variant variant = Variant.None;
     private Pose pose = Pose.Crying;
 
     private final WeepingAngelAI ai = new WeepingAngelAI(this);
@@ -44,20 +43,7 @@ public class WeepingAngelEntity extends MobEntity {
     // idk why it needs this
     public WeepingAngelEntity(EntityType<? extends MobEntity> entityType, World world) {
         super(entityType, world);
-        if (this.getY() < -5)
-            this.variant = Variant.DeepSlate;
     }
-
-    // become deepslate if spawns below -5Y
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
-
-
-//        if (this.getY() < -5)
-            this.variant = Variant.DeepSlate;
-
-        return super.initialize(world, difficulty, spawnReason, entityData);
-    }
-
 
     //TODO THIS IS HORRIBLE!!! FIX THE STUPID ROTATION
     public void setAngelYaw(float yaw) {
@@ -71,6 +57,9 @@ public class WeepingAngelEntity extends MobEntity {
         super.tick();
         if (!isRemoved() && isAlive())
             ai.update(getWorld().isClient());
+        if (this.variant == Variant.None) {
+//            this.variant = getY() < -5 ? Variant.DeepSlate : Variant.Stone;
+        }
 
     }
 
@@ -81,30 +70,32 @@ public class WeepingAngelEntity extends MobEntity {
         nbt.putBoolean("ai_dormant", ai.dormant);
         nbt.putInt("ai_phase", ai.phase);
         nbt.putInt("ai_aggression", ai.aggression);
+        nbt.putString("variant",variant.name()); // fck java for not allowing implicit numerical conversion of enums
         return nbt;
     }
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         try {
-            ai.phase = nbt.getInt("ai_phase");
-            ai.dormant = nbt.getBoolean("ai_dormant");
-            ai.aggression = nbt.getInt("ai_aggression");
-            ai.pitch = getPitch();
-            ai.yaw = getYaw();
-        } catch (Exception ignored) {}
+            this.ai.phase = nbt.getInt("ai_phase");
+            this.ai.dormant = nbt.getBoolean("ai_dormant");
+            this.ai.aggression = nbt.getInt("ai_aggression");
+            this.pose = getAngelPose(); // update pos
+            this.ai.pitch = getPitch();
+            this.ai.yaw = getYaw();
+            this.variant = Variant.valueOf(nbt.getString("variant"));
+
+        } catch (Exception e) {
+            Mortisomnia.LOGGER.error(e.getMessage());
+            Mortisomnia.LOGGER.error(e.getStackTrace().toString());
+        }
     }
 
     public Identifier getTexture() {
-        if (this.variant == Variant.DeepSlate)
-             return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel_deepslate.png");
-
-         return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel.png");
-         /*
-        switch (this.variant) {
-            case DeepSlate: return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel_deepslate.png");
-            default: return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel.png");
-        }*/
+        return switch (this.variant) {
+            case DeepSlate -> Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel_deepslate.png");
+            default -> Identifier.of(Mortisomnia.MOD_ID, "textures/entity/weeping_angel.png");
+        };
     }
 
     @Override

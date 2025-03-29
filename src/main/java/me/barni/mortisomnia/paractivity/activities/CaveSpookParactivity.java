@@ -1,5 +1,6 @@
 package me.barni.mortisomnia.paractivity.activities;
 
+import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
 import me.barni.mortisomnia.datagen.MortisomniaSounds;
 import me.barni.mortisomnia.paractivity.ParaController;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 
 public class CaveSpookParactivity extends Paractivity {
 
-    private static final int DELAY = (25*20)-13; //24.5s
+    private static final int DELAY = (25*20)-10; //24.5s
 
     private final int SCAN_VERTICAL = 32;
     private final int SCAN_HORIZONTAL = 48;
@@ -47,7 +48,7 @@ public class CaveSpookParactivity extends Paractivity {
         // First tick -> play sound
         if (timer.time == DELAY) {
             player.playSoundToPlayer(MortisomniaSounds.CAVE_MONSTER, SoundCategory.MASTER, 1, 1);
-            player.sendMessage(Text.literal("Press Shift to run").formatted(Formatting.DARK_RED), true); // ? fun but unsure to keep
+            player.sendMessage(Text.translatable(Mortisomnia.MOD_ID+".text.run").formatted(Formatting.DARK_RED), true); // ? fun but unsure to keep
 
         }
 

@@ -91,7 +91,7 @@ public class WeepingAngelParactivity extends Paractivity {
 
         foundAngels = world.getOtherEntities(player, new Box(player.getBlockPos()).expand(SEARCH_RANGE), ent -> ent instanceof WeepingAngelEntity).size();
         if (foundAngels >= MAX_EXISTING_ANGELS)
-            return ParaResult.fail("too many angels nearby (" + MAX_EXISTING_ANGELS + ")");
+            return ParaResult.fail("too many angels nearby (" + foundAngels + ")");
 
         return ParaResult.success();
     }
