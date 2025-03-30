@@ -18,7 +18,7 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class ParactivityCommand {
-    private enum MODES {ADD, FORCE_ADD, LIST, QUERY}
+    private enum MODES {ADD, FORCE_ADD, LIST, QUERY, RESET}
 
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, registrationEnvironment) -> {
@@ -26,6 +26,9 @@ public class ParactivityCommand {
                 literal("paractivity").requires(src -> src.hasPermissionLevel(2))
                         .then(literal("list")
                             .executes(ctx -> execute(ctx, MODES.LIST))
+                        )
+                        .then(literal("reset")
+                                .executes(ctx -> execute(ctx, MODES.RESET))
                         )
                         .then(literal("query")
                                 .executes(ctx -> execute(ctx, MODES.QUERY))
@@ -58,6 +61,7 @@ public class ParactivityCommand {
             case QUERY -> query(player);
             case ADD -> handleAdd(player, StringArgumentType.getString(ctx, "name"), false);
             case FORCE_ADD -> handleAdd(player, StringArgumentType.getString(ctx, "name"), true);
+            case RESET -> ParaController.getInstance().reset();
         }
         return 1;
     }

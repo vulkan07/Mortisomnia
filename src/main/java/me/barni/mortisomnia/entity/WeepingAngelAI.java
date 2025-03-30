@@ -65,9 +65,9 @@ public class WeepingAngelAI {
     private void moveBehindPlayer() {
         if (targetPlayer.getPos().distanceTo(entity.getPos()) > 5) {
             Vec3d pos = targetPlayer.getPos().add(
-                    0 + Math.cos(Math.toRadians(targetPlayer.getHeadYaw() - (87+RANDOM.nextInt(7)))) * RANDOM.nextFloat(1f,2.5f),
+                    0 + Math.cos(Math.toRadians(targetPlayer.getHeadYaw() - (87+RANDOM.nextInt(7)))) * RANDOM.nextFloat(1.4f,2.5f),
                     0,
-                    0 + Math.sin(Math.toRadians(targetPlayer.getHeadYaw() - (87+RANDOM.nextInt(7)))) * RANDOM.nextFloat(1f,2.5f)
+                    0 + Math.sin(Math.toRadians(targetPlayer.getHeadYaw() - (87+RANDOM.nextInt(7)))) * RANDOM.nextFloat(1.4f,2.5f)
             );
             Vec3d finalPos = new Vec3d((int)pos.x, (int)pos.y, (int)pos.z);
             BlockPos blockPos = new BlockPos((int)finalPos.x, (int)finalPos.y, (int)finalPos.z);

@@ -1,8 +1,8 @@
 package me.barni.mortisomnia.datagen;
 
-import me.barni.mortisomnia.client.EctoplasmParticle;
-import me.barni.mortisomnia.client.MagicParticle;
-import me.barni.mortisomnia.client.PlagueParticle;
+import me.barni.mortisomnia.client.particles.EctoplasmParticle;
+import me.barni.mortisomnia.client.particles.MagicParticle;
+import me.barni.mortisomnia.client.particles.PlagueParticle;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.SimpleParticleType;

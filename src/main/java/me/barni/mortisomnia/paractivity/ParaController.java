@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
@@ -104,14 +103,19 @@ public class ParaController {
     public void init() {
         Mortisomnia.LOGGER.info("ParaController initialized");
         ServerTickEvents.END_SERVER_TICK.register(this::tick);
-        ServerWorldEvents.UNLOAD.register(this::unload);
+        ServerWorldEvents.UNLOAD.register( (s,w) -> this.reset() );
     }
 
-    private void unload(MinecraftServer minecraftServer, ServerWorld serverWorld) {
+    // called when a world is unloaded, as this object does not get deleted
+    // e.g. in singleplayer when you load a world again without exiting the game
+    public void reset() {
+        Mortisomnia.LOGGER.info("ParaController Reset");
         for (Paractivity activity : activities) {
             activity.cancel();
         }
         activities.clear();
+        typeCoolDownTimers.clear();
+        coolDownTimer = 0;
     }
 
     public boolean addHandledParactivity(Paractivity activity, boolean force, boolean needsHaunt) {

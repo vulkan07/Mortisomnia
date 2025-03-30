@@ -1,13 +1,17 @@
 package me.barni.mortisomnia.client;
 
+import me.barni.mortisomnia.client.entities.MortisomniaClientEntities;
 import me.barni.mortisomnia.datagen.MortisomniaBlocks;
 import me.barni.mortisomnia.datagen.MortisomniaParticles;
 import me.barni.mortisomnia.mixin.GameRendererSetPostProcessorMixin;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
+@Environment(value=EnvType.CLIENT)
 public class MortisomniaClient implements ClientModInitializer {
 
     private float time = 0;
@@ -16,6 +20,7 @@ public class MortisomniaClient implements ClientModInitializer {
     public void onInitializeClient() {
         MortisomniaBlocks.clientRegisterBlocks();
         MortisomniaParticles.clientRegisterParticles();
+        MortisomniaClientEntities.registerClientEntities();
         WorldRenderEvents.END.register(context -> {
             var processor = context.gameRenderer().getPostProcessor();
             var world = context.world();

@@ -1,4 +1,4 @@
-package me.barni.mortisomnia.client;
+package me.barni.mortisomnia.client.particles;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
