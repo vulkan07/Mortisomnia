@@ -3,6 +3,7 @@ package me.barni.mortisomnia;
 import me.barni.mortisomnia.datagen.*;
 import me.barni.mortisomnia.events.MortisomniaEventHandlers;
 import me.barni.mortisomnia.paractivity.ParaController;
+import me.barni.mortisomnia.paractivity.Paractivities;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -28,7 +29,9 @@ public class Mortisomnia implements ModInitializer {
         MortisomniaCommands.registerCommands();
         MortisomniaEventHandlers.subscribeToGameEvents();
 
+        Paractivities.init(); // Force statics to initalize bruh
         ParaController.getInstance().init();
+
 
         LOGGER.info("Mortisomnia initialized");
     }

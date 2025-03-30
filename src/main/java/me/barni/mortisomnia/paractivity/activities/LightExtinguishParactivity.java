@@ -16,6 +16,9 @@ import java.util.Stack;
 
 public class LightExtinguishParactivity extends Paractivity {
 
+    public static final String id = "light_extinguish";
+    public static Paractivity create( PlayerEntity player) { return new LightExtinguishParactivity(player); }
+    public String getName() { return id; }
 
     private final int DELAY_AFTER_SCAN = 80; //
     private final int MIN_LIGHT_BLOCKS = 70; // if number of found blocks is less than this, cancel event
@@ -124,11 +127,6 @@ public class LightExtinguishParactivity extends Paractivity {
     @Override
     public boolean permitsParactivity(Paractivity other) {
         return !(other instanceof CapturedLightParactivity);
-    }
-
-    @Override
-    public String getName() {
-        return Paractivity.LIGHT_EXTINGUISH;
     }
 
 }

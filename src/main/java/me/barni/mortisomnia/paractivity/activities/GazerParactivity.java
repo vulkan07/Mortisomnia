@@ -24,6 +24,10 @@ import static me.barni.mortisomnia.Mortisomnia.RANDOM;
 
 public class GazerParactivity extends Paractivity {
 
+    public static final String id = "gazer";
+    public static Paractivity create( PlayerEntity player) { return new GazerParactivity(player); }
+    public String getName() { return id; }
+
     private static final int GAZER_COUNT = 20;
     private static final int SPAWN_OUTER_DISTANCE = 20; // Maximum distance from player (square)
     private static final int SPAWN_INNER_DISTANCE = 9; // Minimum distance from player (square)
@@ -148,11 +152,6 @@ public class GazerParactivity extends Paractivity {
         }
 
         return ParaResult.success();
-    }
-
-    @Override
-    public String getName() {
-        return Paractivity.GAZER;
     }
 
     @Override

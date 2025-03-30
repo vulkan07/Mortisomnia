@@ -3,31 +3,13 @@ package me.barni.mortisomnia.paractivity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
-public abstract class Paractivity implements IParactivity {
+public abstract class Paractivity {
 
-    public static final String CAPTURED_LIGHT = "CapturedLight";
-    public static final String SPOOK_SOUND = "SpookSound";
-    public static final String TORCH_OFF = "TorchOff";
-    public static final String LIGHT_EXTINGUISH = "LightExtinguish";
-    public static final String LIGHT_FLICKER = "LightFlicker";
-    public static final String WEEPING_ANGEL = "WeepingAngel";
-    public static final String DOOR_FLIP = "DoorFlip";
-    public static final String DOOR_TOGGLE = "DoorToggle";
-    public static final String SCARECROW = "ScareCrow";
-    public static final String FERTILIZER_CAPUSE = "FertilizerCapsule";
-    public static final String KILL_FOLIAGE = "KillFoliage";
-    public static final String GAZER = "Gazer";
-    public static final String CREEPER = "Creeper";
-    public static final String CAVE_SPOOK = "CaveSpook";
-    /*
-    * TO ADD AN ACTIVITY FULLY:
-    * 1. register its name here
-    * 2. add to ParactivityCommand.java (both help and execute)
-    * 3. add to random selector in ParaController
-    * */
+    public abstract ParaResult tick();
+    public abstract String getName();
 
-    protected World world;
     protected PlayerEntity player;
+    protected World world;
 
     protected boolean finished, success;
 
@@ -55,7 +37,6 @@ public abstract class Paractivity implements IParactivity {
      * @param ignoreHauntRequired if set, the player does not need to have enough haunt to add this activity
      * @return {@link ParaResult#success()} if all initialization checks were successful. otherwise {@link  ParaResult#fail(String reason)}
      * */
-    @Override
     public final ParaResult init(boolean ignoreHauntRequired) {
         if (!ignoreHauntRequired && requiredHaunt > 0 && ParaController.getInstance().getPlayerHaunt(player) < requiredHaunt) {
             return ParaResult.fail("Not enough haunt");
@@ -70,7 +51,6 @@ public abstract class Paractivity implements IParactivity {
 
     protected abstract ParaResult customInit();
 
-    @Override
     public void cancel() {
         this.finished = true;
         this.success = false;
@@ -85,19 +65,15 @@ public abstract class Paractivity implements IParactivity {
         return ParaResult.end();
     }
 
-    @Override
     public boolean permitsParactivity(Paractivity other) {
         return true;
     }
-    @Override
     public boolean isFinished() {
         return this.finished;
     }
-    @Override
     public PlayerEntity getPlayer() {
         return player;
     }
-    @Override
     public World getWorld() {
         return world;
     }

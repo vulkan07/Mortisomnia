@@ -20,6 +20,10 @@ import java.util.Stack;
 
 public class FertilizerCapsuleParactivity extends Paractivity {
 
+    public static final String id = "fertilizer_capsule";
+    public static Paractivity create( PlayerEntity player) { return new FertilizerCapsuleParactivity(player); }
+    public String getName() { return id; }
+
     private final int SCAN_VERTICAL = 12; // goes in both direcctions, so x will scan 2x+1 blocks
     private final int SCAN_HORIZONTAL = 24; // goes in both direcctions, so x will scan 2x+1 blocks
     private final int MAX_CROPS_TO_ADD = 32;
@@ -110,10 +114,4 @@ public class FertilizerCapsuleParactivity extends Paractivity {
     public boolean permitsParactivity(Paractivity other) {
         return !(other instanceof  ScareCrowParactivity) && !(other instanceof FertilizerCapsuleParactivity);
     }
-
-    @Override
-    public String getName() {
-        return Paractivity.FERTILIZER_CAPUSE;
-    }
-
 }

@@ -19,6 +19,10 @@ import static me.barni.mortisomnia.Mortisomnia.RANDOM;
 // TODO: STAGE 2 for a few seconds, all crop farmblocks should emit ectoplasm before breaking?
 public class ScareCrowParactivity extends Paractivity {
 
+    public static final String id = "scare_crow";
+    public static Paractivity create( PlayerEntity player) { return new ScareCrowParactivity(player); }
+    public String getName() { return id; }
+
     private static final int MIN_CROPS = 20;
     private static final int MAX_CROPS_TO_BREAK = 200;
 
@@ -93,8 +97,4 @@ public class ScareCrowParactivity extends Paractivity {
         return false;
     }
 
-    @Override
-    public String getName() {
-        return Paractivity.SCARECROW;
-    }
 }

@@ -16,6 +16,10 @@ import java.util.ArrayList;
 
 public class KillFoliageParactivity extends Paractivity {
 
+    public static final String id = "kill_foliage";
+    public static Paractivity create( PlayerEntity player) { return new KillFoliageParactivity(player); }
+    public String getName() { return id; }
+
     private static final int SCAN_VERTICAL = 32; // goes in both direcctions, so x will scan 2x+1 blocks
     private static final int SCAN_HORIZONTAL = 96; // goes in both direcctions, so x will scan 2x+1 blocks
     private static final int START_FALLOFF = 70; // where the spherical falloff start
@@ -105,11 +109,6 @@ public class KillFoliageParactivity extends Paractivity {
     @Override
     public boolean permitsParactivity(Paractivity other) {
         return !(other instanceof FertilizerCapsuleParactivity) && !(other instanceof KillFoliageParactivity);
-    }
-
-    @Override
-    public String getName() {
-        return Paractivity.KILL_FOLIAGE;
     }
 
 }

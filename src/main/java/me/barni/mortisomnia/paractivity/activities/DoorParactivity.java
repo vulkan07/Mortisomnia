@@ -20,6 +20,10 @@ import java.util.Stack;
 
 public class DoorParactivity extends Paractivity {
 
+    public static final String id = "door";
+    public static Paractivity create( PlayerEntity player) { return new DoorParactivity(player); }
+    public String getName() { return id; }
+
     private final int SCAN_VERTICAL = 6;
     private final int SCAN_HORIZONTAL = 10;
     private final int ALONE_THRESHOLD = 48;
@@ -116,10 +120,4 @@ public class DoorParactivity extends Paractivity {
     public boolean permitsParactivity(Paractivity other) {
         return false;
     }
-
-    @Override
-    public String getName() {
-        return Paractivity.DOOR_FLIP;
-    }
-
 }

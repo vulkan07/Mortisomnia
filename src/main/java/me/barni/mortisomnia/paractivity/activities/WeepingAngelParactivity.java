@@ -25,6 +25,10 @@ import static me.barni.mortisomnia.Mortisomnia.RANDOM;
 
 public class WeepingAngelParactivity extends Paractivity {
 
+    public static final String id = "weeping_angel";
+    public static Paractivity create( PlayerEntity player) { return new WeepingAngelParactivity(player); }
+    public String getName() { return id; }
+
     private static final int MAX_EXISTING_ANGELS = 4;
     private static final int MIN_TO_SPAWN = 1;
     private static final int MAX_TO_SPAWN = 3;
@@ -125,8 +129,4 @@ public class WeepingAngelParactivity extends Paractivity {
         return ParaResult.end();
     }
 
-    @Override
-    public String getName() {
-        return Paractivity.WEEPING_ANGEL;
-    }
 }

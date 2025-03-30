@@ -17,6 +17,10 @@ import net.minecraft.util.math.Vec3d;
 
 public class CreeperParactivity extends Paractivity {
 
+    public static final String id = "creeper";
+    public static Paractivity create( PlayerEntity player) { return new CreeperParactivity(player); }
+    public String getName() { return id; }
+
     private static final float CREEPER_DIST = 0.9f;
 
     private CreeperEntity creeper = null;
@@ -94,11 +98,6 @@ public class CreeperParactivity extends Paractivity {
         }
 
         return ParaResult.success();
-    }
-
-    @Override
-    public String getName() {
-        return Paractivity.CREEPER;
     }
 
     @Override

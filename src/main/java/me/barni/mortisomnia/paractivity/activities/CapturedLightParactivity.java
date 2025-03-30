@@ -12,6 +12,9 @@ import java.util.Stack;
 
 public class CapturedLightParactivity extends Paractivity {
 
+    public static final String id = "captured_light";
+    public static Paractivity create( PlayerEntity player) { return new CapturedLightParactivity(player); }
+
     private final int MAX_SCAN_PER_TICK = 32000;
     private final int SCAN_VERTICAL = 12; // goes in both direcctions, so x will scan 2x+1 blocks
     private final int SCAN_HORIZONTAL = 48; // goes in both direcctions, so x will scan 2x+1 blocks
@@ -90,8 +93,6 @@ public class CapturedLightParactivity extends Paractivity {
     }
 
     @Override
-    public String getName() {
-        return Paractivity.CAPTURED_LIGHT;
-    }
+    public String getName() { return id; }
 
 }

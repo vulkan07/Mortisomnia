@@ -14,6 +14,10 @@ import static me.barni.mortisomnia.Mortisomnia.RANDOM;
 
 public class SpookSoundParactivity extends Paractivity {
 
+    public static final String id = "spook_sound";
+    public static Paractivity create( PlayerEntity player) { return new SpookSoundParactivity(player); }
+    public String getName() { return id; }
+
     public static final int MIN_DISTANCE = 7;
     public static final int MAX_DISTANCE = 15;
 
@@ -51,8 +55,4 @@ public class SpookSoundParactivity extends Paractivity {
         return end();
     }
 
-    @Override
-    public String getName() {
-        return Paractivity.SPOOK_SOUND;
-    }
 }

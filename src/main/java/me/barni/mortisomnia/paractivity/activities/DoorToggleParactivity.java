@@ -23,6 +23,10 @@ import java.util.ArrayList;
 
 public class DoorToggleParactivity extends Paractivity {
 
+    public static final String id = "door_toggle";
+    public static Paractivity create( PlayerEntity player) { return new DoorToggleParactivity(player); }
+    public String getName() { return id; }
+
     private final int MAX_TOGGLES = 60;
     private final int TICK_DEALY = 20;
     private final int SCAN_VERTICAL = 6;
@@ -121,11 +125,6 @@ public class DoorToggleParactivity extends Paractivity {
     @Override
     public boolean permitsParactivity(Paractivity other) {
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return Paractivity.DOOR_TOGGLE;
     }
 
 }

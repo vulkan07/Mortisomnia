@@ -18,6 +18,9 @@ import java.util.ArrayList;
 
 public class CaveSpookParactivity extends Paractivity {
 
+    public static final String id = "cave_spook";
+    public static Paractivity create( PlayerEntity player) { return new CaveSpookParactivity(player); }
+
     private static final int DELAY = (25*20)-10; //24.5s
 
     private final int SCAN_VERTICAL = 32;
@@ -75,7 +78,7 @@ public class CaveSpookParactivity extends Paractivity {
 
     @Override
     public String getName() {
-        return Paractivity.CAVE_SPOOK;
+        return id;
     }
 
     @Override

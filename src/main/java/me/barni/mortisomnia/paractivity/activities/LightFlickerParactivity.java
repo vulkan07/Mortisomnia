@@ -19,6 +19,9 @@ import static me.barni.mortisomnia.Mortisomnia.RANDOM;
 
 public class LightFlickerParactivity extends Paractivity {
 
+    public static final String id = "light_flicker";
+    public static Paractivity create( PlayerEntity player) { return new LightFlickerParactivity(player); }
+    public String getName() { return id; }
 
     private final int FLICKERS_PER_TICK = 8;
     private final int FLICKER_DURATION = 15*20; // 10 seconds
@@ -109,11 +112,6 @@ public class LightFlickerParactivity extends Paractivity {
     @Override
     public boolean permitsParactivity(Paractivity other) {
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return Paractivity.LIGHT_FLICKER;
     }
 
 }

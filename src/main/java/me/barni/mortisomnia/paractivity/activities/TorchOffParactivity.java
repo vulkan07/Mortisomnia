@@ -16,6 +16,9 @@ import java.util.Stack;
 
 public class TorchOffParactivity extends Paractivity {
 
+    public static final String id = "torch_off";
+    public static Paractivity create( PlayerEntity player) { return new TorchOffParactivity(player); }
+    public String getName() { return id; }
 
     private final int SCAN_VERTICAL = 6;
     private final int SCAN_HORIZONTAL = 12;
@@ -69,11 +72,6 @@ public class TorchOffParactivity extends Paractivity {
     @Override
     public boolean permitsParactivity(Paractivity other) {
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return Paractivity.TORCH_OFF;
     }
 
 }
