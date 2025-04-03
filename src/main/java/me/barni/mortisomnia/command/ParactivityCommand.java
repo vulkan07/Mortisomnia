@@ -39,7 +39,7 @@ public class ParactivityCommand {
             dispatcher.register(
                 literal("paractivity").requires(src -> src.hasPermissionLevel(2))
                         .then(literal("add").then(argument("name", StringArgumentType.string()).suggests(SUGGESTIONS)
-                            .then(argument("forced", BoolArgumentType.bool()) .executes(ctx -> execute(ctx, BoolArgumentType.getBool(ctx, "force") ? MODES.FORCE_ADD : MODES.ADD))))
+                            .then(argument("forced", BoolArgumentType.bool()) .executes(ctx -> execute(ctx, BoolArgumentType.getBool(ctx, "forced") ? MODES.FORCE_ADD : MODES.ADD))))
                             .then(argument("name", StringArgumentType.string()) .executes(ctx -> execute(ctx, MODES.ADD)) ) )
                         .then(literal("reset") .executes(ctx -> execute(ctx, MODES.RESET)))
                         .then(literal("query") .executes(ctx -> execute(ctx, MODES.QUERY)))

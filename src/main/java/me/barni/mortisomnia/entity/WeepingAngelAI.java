@@ -5,6 +5,8 @@ import me.barni.mortisomnia.Utils;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -15,162 +17,197 @@ import java.util.Random;
 
 public class WeepingAngelAI {
     private static final Random RANDOM = Mortisomnia.RANDOM;
-    private static final int Y_STEP_RANGE = 6;
-   // public static final int s_DORMANT = 0; // Has to be awoken externally, else it doesn't do anything - used for structures
-    public static final int s_SPAWN = 0; // When spawns naturally, start as inactive
-    public static final int s_LOOK_ONLY = 1;
-    public static final int s_AWAKE = 2;
+    private static final int VERTICAL_RANGE = 5;
+    public static final int MAX_AGGRESSION = 70;
 
-
-    public record Behavior(
-            boolean dormant,
-            boolean looking,
-            boolean moving,
-            boolean attacking,
-            int aggression
-    ) {}
-
-    private final WeepingAngelEntity entity;
-    private final Utils.TickTimer updateTimer = new Utils.TickTimer(20);
+    public static final int PHASE_DORMANT = 0; // AI does not attack over time, only from external trigger (e.g. damaged by player)
+    public static final int PHASE_WARMUP = 1; // Default spawn, waits some time before doing anything
+    public static final int PHASE_PEEK = 2; // Looks at player occasionally
+    public static final int PHASE_FOLLOW = 3; // Teleports behind player sometimes
+    public static final int PHASE_ATTACK = 4; // Teleports frequently, attacks when close enough
 
     private PlayerEntity targetPlayer;
-    public float pitch, yaw;
-    public boolean dormant = false;
+    private final WeepingAngelEntity angel;
 
+    public boolean pendingLook = false; // set true to make angel look at player as soon as it is not seen
+    private int phase; // Determines AI behavior
+    private int aggression = 0; // 0-100
+    private final int phaseDelay = 120 + RANDOM.nextInt(20); // Depends on timer time
 
+    private final Utils.TickTimer updateTimer = new Utils.TickTimer(20);
+    private final Utils.TickTimer phaseTimer = new Utils.TickTimer(phaseDelay);
 
-    public int phase;
-    public int aggression = 0;
-    public int phaseDelay = RANDOM.nextInt(500,1200);
-
-    public WeepingAngelAI(WeepingAngelEntity entity) {
-        this.entity = entity;
-        this.phase = s_SPAWN;
+    public PlayerEntity getTargetPlayer() { return targetPlayer; }
+    public int getPhase() { return phase; }
+    public int getAggression() { return aggression; }
+    public void incrementPhase() {
+        int old = phase;
+        this.phase = Math.min(phase + 1, PHASE_ATTACK);
+        if (old != phase) // Only decrease aggression if actual change happened
+            this.aggression /= 5;
+        setAngelPose();
+    }
+    public void incrementAggression() {
+        //angel.setCustomName(Text.of(String.valueOf(aggression)));
+        //angel.setCustomNameVisible(true);
+        if (RANDOM.nextInt(3)==0)
+            this.aggression = Math.min(aggression+1, MAX_AGGRESSION);
+    }
+    public void onDamaged() {
+        this.phase = PHASE_ATTACK;
+        this.aggression = Math.min(aggression+MAX_AGGRESSION/4, MAX_AGGRESSION);
+        this.pendingLook = true;
+        setAngelPose();
     }
 
-    private boolean isValidPlaceToMove(World world, BlockPos pos) {
-        //dont move too close to other angels
-        for (var e : world.getOtherEntities(entity, new Box(pos).expand(1))) {
+    private void setAngelPose() {
+        byte pose = WeepingAngelEntity.POSE_WEEPING;
+        if (phase > PHASE_WARMUP) pose = WeepingAngelEntity.POSE_LOOKING;
+        if (phase >= PHASE_ATTACK) pose = WeepingAngelEntity.POSE_ATTACKING;
+        angel.setAngelPose(pose);
+    }
+
+    public WeepingAngelAI(WeepingAngelEntity entity) {
+        this.angel = entity;
+        this.phase = PHASE_WARMUP;
+    }
+    public void save(NbtCompound nbt) {
+        nbt.putInt("Phase", phase);
+    }
+    public void load(NbtCompound nbt) {
+        if (nbt.contains("Phase"))
+            phase = nbt.getInt("Phase");
+    }
+
+    // NOTE: treats non-solids like torch and grass as solid
+    // NOTE: Blocks with higher hitboxes (e.g. fences) break this
+    private boolean isValidPos(World world, BlockPos bpos) {
+        for (var e : world.getOtherEntities(angel, new Box(bpos).expand(1))) {
             if (e instanceof WeepingAngelEntity) return false;
         }
         boolean valid;
-        valid = !world.getBlockState(pos.down()).isAir() // block below is not air or fluid
-                && !world.getBlockState(pos.down()).isOf(Blocks.WATER)
-                && !world.getBlockState(pos.down()).isOf(Blocks.LAVA);
-        valid &= world.getBlockState(pos).isAir();
-        valid &= world.getBlockState(pos.up()).isAir();
-        valid &= world.getBlockState(pos.up(2)).isAir();
+        valid = !world.getBlockState(bpos.down()).isAir();
+        valid &= !world.getBlockState(bpos.down()).isOf(Blocks.WATER);
+        valid &= !world.getBlockState(bpos.down()).isOf(Blocks.LAVA);
+        valid &= world.getBlockState(bpos).isAir();
+        valid &= world.getBlockState(bpos.up(1)).isAir();
+        valid &= world.getBlockState(bpos.up(2)).isAir();
         return valid;
     }
+
     private void moveBehindPlayer() {
-        if (targetPlayer.getPos().distanceTo(entity.getPos()) > 5) {
-            Vec3d pos = targetPlayer.getPos().add(
-                    0 + Math.cos(Math.toRadians(targetPlayer.getHeadYaw() - (87+RANDOM.nextInt(7)))) * RANDOM.nextFloat(1.4f,2.5f),
-                    0,
-                    0 + Math.sin(Math.toRadians(targetPlayer.getHeadYaw() - (87+RANDOM.nextInt(7)))) * RANDOM.nextFloat(1.4f,2.5f)
-            );
-            Vec3d finalPos = new Vec3d((int)pos.x, (int)pos.y, (int)pos.z);
-            BlockPos blockPos = new BlockPos((int)finalPos.x, (int)finalPos.y, (int)finalPos.z);
+        float dst = targetPlayer.getPos().distanceTo(angel.getPos()) < 2.3f ? 1.0f : 1.9f; // Move even closer if close
 
-            // first check upwards to spawn higher than the player if possible
-            for (int y = blockPos.getY();   y < blockPos.getY()+Y_STEP_RANGE;  y++) {
-                if (isValidPlaceToMove(entity.getWorld(), blockPos.up(blockPos.getY()-y))){
-                    entity.setPosition(finalPos.add(.5, blockPos.getY()-y, .5));
-                    entity.prevX = entity.getX();
-                    entity.prevY = entity.getY();
-                    entity.prevZ = entity.getZ();
-                    return;
-                }
-            }
-            for (int y = blockPos.getY()-Y_STEP_RANGE;  y < blockPos.getY();  y++) {
-                if (isValidPlaceToMove(entity.getWorld(), blockPos.up(blockPos.getY()-y))){
-                    entity.setPosition(finalPos.add(.5, blockPos.getY()-y, .5));
-                    entity.prevX = entity.getX();
-                    entity.prevY = entity.getY();
-                    entity.prevZ = entity.getZ();
-                    return;
-                }
-            }
+            Vec3d targetPos = targetPlayer.getPos().add(
+                0 + Math.cos(Math.toRadians(targetPlayer.getHeadYaw() -90)) * dst,
+                0,
+                0 + Math.sin(Math.toRadians(targetPlayer.getHeadYaw() -90)) * dst
+        );
 
-        } else {
-            // move up to player's Y level (emulation of Jump)
-            if (targetPlayer.getY() - entity.getY() > .5)
-                entity.setPosition(entity.getPos().add(0, targetPlayer.getY() - entity.getY(), 0));
-            entity.setVelocity(targetPlayer.getPos().subtract(entity.getPos()).multiply(.2));
-        }
+        BlockPos bpos = new BlockPos(Math.round((float)targetPos.x-.5f), (int)targetPos.y, Math.round((float)targetPos.z-.5f));
+
+        for (int y = VERTICAL_RANGE /2; y > -VERTICAL_RANGE /2; y--)
+            if (isValidPos(angel.getWorld(), bpos.up(y))) {
+                angel.setPosition(bpos.getX()+.5, bpos.getY()+y,bpos.getZ()+.5);
+                return;
+            }
+        for (int y = VERTICAL_RANGE; y > -VERTICAL_RANGE; y--)
+            if (isValidPos(angel.getWorld(), bpos.up(y))) {
+                angel.setPosition(bpos.getX()+.5, bpos.getY()+y,bpos.getZ()+.5);
+                return;
+            }
+    }
+
+    public void lookAt(PlayerEntity player, boolean headOnly) {
+        // Approximate next player position like it was following and predicting where the player moves
+        Vec3d target = player.getSyncedPos().add(player.getMovement().multiply(7,0,7)).add(0,player.getStandingEyeHeight(),0);
+        Vec3d vec3d = EntityAnchorArgumentType.EntityAnchor.EYES.positionAt(angel);
+        double d = target.x - vec3d.x;
+        double e = target.y - vec3d.y;
+        double f = target.z - vec3d.z;
+        double g = Math.sqrt(d * d + f * f);
+        float pitch = MathHelper.wrapDegrees((float) (-(MathHelper.atan2(e, g) * 57.2957763671875)));
+        float yaw = MathHelper.wrapDegrees((float) (MathHelper.atan2(f, d) * 57.2957763671875) - 90.0f);
+        angel.setAngles(headOnly ? angel.getYaw() : yaw, pitch);
+        angel.setHeadYaw(yaw);
 
     }
 
-    public void update(boolean isClient) {
-        if (isClient) return;
-
-        // look at target every frame to prevent the pitch & yaw from resetting TODO fix rotation tick reset
-        entity.setPitch(pitch);
-        entity.setYaw(yaw);
-        entity.setHeadYaw(yaw);
-
-        if (dormant)
-            return;
-
-
-        if (entity.getWorld().isNight()) {
-            if (updateTimer.tick()) {
-
-                /*if (targetPlayer != null) {
-                    if (!Utils.canPlayerSeeEntity(targetPlayer, entity))
-                        targetPlayer.sendMessage(Text.literal("You can't see the angel"), false);
-                    return;
-                }*/
-
-                if (entity.age > phaseDelay * (phase + 1)) {
-                    phase = Math.min(phase + 1, s_AWAKE); // Dont go above s_AWAKE
-//                    Mortisomnia.LOGGER.info("[WeepingAngel] Phase is now " + phase);
+    /**
+     * Update the targeted player if there is none, or it is dead to the closest one
+     */
+    private void updatePlayer() {
+            float minDist = Float.POSITIVE_INFINITY;
+            float d;
+            this.targetPlayer = null;
+            for (var p : angel.getWorld().getPlayers()) {
+                if (!Utils.isPlayerCandidate(p))
+                    continue;
+                d = (float) angel.squaredDistanceTo(p);
+                if (d < minDist) {
+                    minDist = d;
+                    this.targetPlayer = p;
                 }
-                // Increment aggression by 1 or 0 every tick if phase is past s_LOOK_ONLY
-                if (phase > s_LOOK_ONLY) {
-                    aggression += RANDOM.nextInt(31) == 0 ? 1 : 0;
-                    //                   Mortisomnia.LOGGER.info("[WeepingAngel] aggression is now " + aggression);
+            }
+    }
+
+    /*
+     * damage player if possible and within distance, despawn if also killed them
+     */
+    private boolean attackPlayer() {
+        if (!Utils.isPlayerCandidate(this.targetPlayer)) return false;
+
+        if (targetPlayer.getPos().distanceTo(angel.getPos()) < 1.25) {
+            boolean damaged = targetPlayer.damage(angel.getWorld().getDamageSources().mobAttack(angel), RANDOM.nextInt(15, 18));
+            if (targetPlayer.isDead()) angel.discard(); // Despawn the Angel if killed the player
+            return damaged;
+        }
+        return false;
+    }
+
+    /**
+    * Called when the entity gets damaged for example
+    */
+    public void setTargetPlayer(PlayerEntity player) {
+        this.targetPlayer = player;
+    }
+
+    public void update() {
+        if (phase == PHASE_DORMANT) return;
+
+        if (updateTimer.tick() && angel.getWorld().isNight()) { // Only progress anything at night
+            if (phaseTimer.tick()) incrementPhase(); // AI progresses without a suitable player!
+
+            updatePlayer(); // select who is targeted
+
+            if (!Utils.isPlayerCandidate(this.targetPlayer)) return;
+            if (Utils.canAnyPlayersSeeEntity(angel.getWorld(), angel)) {
+                if (angel.getAngelVariant() == WeepingAngelEntity.DEEPSLATE_VARIANT) {
+                    targetPlayer.sendMessage(Text.of("lights!"));
                 }
+                return;
+            }
 
-                // Return if not active yet or
-                // With greater aggression, be more chance of stepping
-                // TOTO goofy fix: elevates chances of LOOK_ONLY phase and ignores aggression
-                if (phase == s_SPAWN || RANDOM.nextInt(60) > (phase == s_LOOK_ONLY ? 10 : aggression))
-                    return;
+            // ATTACK
+            if (phase == PHASE_ATTACK)
+                if (attackPlayer()) return;
 
-//                Mortisomnia.LOGGER.info("[WeepingAngel] moved - aggression:" + aggression);
+            if (phase > PHASE_WARMUP)
+                incrementAggression();
 
-                if (entity.getWorld().getPlayers().isEmpty()) {
-                    targetPlayer = null;
-                    return;
-                }
-                targetPlayer = entity.getWorld().getPlayers().getFirst(); // TODO multiplayer support
+            // MOVE
+            if (phase >= PHASE_FOLLOW && RANDOM.nextInt(Math.max(1,MAX_AGGRESSION-aggression))==0) {
+                moveBehindPlayer();
+                lookAt(this.targetPlayer, false);
+            }
 
-                if (targetPlayer.isSpectator() || targetPlayer.isCreative())
-                    return;
-
-                if (!Utils.canPlayerSeeEntity(targetPlayer, entity)) {
-
-                    // Damage player if close enough
-                    if (targetPlayer.getPos().distanceTo(entity.getPos()) < 1.25)
-                        targetPlayer.damage(entity.getWorld().getDamageSources().mobAttack(entity), RANDOM.nextInt(15, 22));
-                        // Or move towards it
-                    else if (phase != s_LOOK_ONLY)
-                        moveBehindPlayer();
-
-                    // Look at player and save pitch&yaw to prevent resetting it by minecraft
-                    Vec3d target = targetPlayer.getPos().add(0, 1.8, 0);
-                    Vec3d vec3d = EntityAnchorArgumentType.EntityAnchor.EYES.positionAt(entity);
-                    double d = target.x - vec3d.x;
-                    double e = target.y - vec3d.y;
-                    double f = target.z - vec3d.z;
-                    double g = Math.sqrt(d * d + f * f);
-                    pitch = MathHelper.wrapDegrees((float) (-(MathHelper.atan2(e, g) * 57.2957763671875)));
-                    yaw = MathHelper.wrapDegrees((float) (MathHelper.atan2(f, d) * 57.2957763671875) - 90.0f);
-
-
-                }
+            // LOOK
+            if (phase == PHASE_PEEK && RANDOM.nextInt(Math.max(1,MAX_AGGRESSION-aggression))==0 || pendingLook) {
+                lookAt(this.targetPlayer, false);
+                pendingLook = false;
             }
         }
     }
 }
+
+

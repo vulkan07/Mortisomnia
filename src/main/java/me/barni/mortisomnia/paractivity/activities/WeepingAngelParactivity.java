@@ -9,16 +9,14 @@ import me.barni.mortisomnia.paractivity.Paractivity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.LightType;
-import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static me.barni.mortisomnia.Mortisomnia.RANDOM;
 
@@ -29,45 +27,57 @@ public class WeepingAngelParactivity extends Paractivity {
     public static Paractivity create( PlayerEntity player) { return new WeepingAngelParactivity(player); }
     public String getName() { return id; }
 
-    private static final int MAX_EXISTING_ANGELS = 4;
-    private static final int MIN_TO_SPAWN = 1;
-    private static final int MAX_TO_SPAWN = 3;
-    private static final int SPAWN_OUTER_DISTANCE = 40; // Maximum distance from player (square)
-    private static final int SPAWN_INNER_DISTANCE = 10; // Minimum distance from player (square)
-
-    private static final int SPAWN_MAX_Y_OFFSET = 10;
-    private static final int MAX_SPAWN_TRIES = 30;
+    private static final int MAX_EXISTING_ANGELS = 6;
+    private static final int MIN_TO_SPAWN = 2;
+    private static final int MAX_TO_SPAWN = 4;
+    private static final int SPAWN_OUTER_DISTANCE = 20; // Maximum distance from player (square)
+    private static final int SPAWN_INNER_DISTANCE = 5; // Minimum distance from player (square)
+    private static final int SPAWN_MAX_Y_OFFSET = 7;
+    private static final int MAX_SPAWN_TRIES = 50;
     private static final int SEARCH_RANGE = 48;
 
-    private int foundAngels;
+    private static final int PHASE_SPAWN = 0;
+    private static final int PHASE_ATTACK = 1;
+
+    private int phase = 0;
+    private List<Entity> angels;
 
     public WeepingAngelParactivity(PlayerEntity player) {
         super(player);
-        setMeta(2, ParaController.toControllerTime(10,0), 20,120);
+        setMeta(2, ParaController.toControllerTime(10,0), 50,200);
     }
 
 
-    // Allow spawning on snow layer blocks
+    // Allow spawning on snow layer blocks TODO merge with isValidPos
     public static boolean canSpawnOnBlock(World world, BlockPos pos) {
         BlockState block = world.getBlockState(pos);
         return block.isSolidBlock(world,pos) || block.isOf(Blocks.SNOW) || block.isOf(Blocks.DIRT_PATH) || block.getBlock() instanceof SlabBlock;
     }
 
-    private boolean isValidPos(BlockPos pos) {
-        BlockHitResult hitResult = player.getWorld().raycast(new RaycastContext(player.getEyePos(), Vec3d.of(pos.up()), RaycastContext.ShapeType.COLLIDER,
-                RaycastContext.FluidHandling.NONE, player));
-        if (hitResult.getType() == HitResult.Type.MISS)
-            return false;
+    private boolean isValidPos(WeepingAngelEntity angel, BlockPos bpos) {
+        for (var e : world.getOtherEntities(angel, new Box(bpos).expand(1))) {
+            if (e instanceof WeepingAngelEntity) return false;
+        }
+        boolean valid;
+        valid = !world.getBlockState(bpos.down()).isAir();
+//        valid &= canSpawnOnBlock(world,bpos); // not working burh
+        valid &= !world.getBlockState(bpos.down()).isOf(Blocks.WATER);
+        valid &= !world.getBlockState(bpos.down()).isOf(Blocks.LAVA);
+        valid &= world.getBlockState(bpos).isAir();
+        valid &= world.getBlockState(bpos.up(1)).isAir();
+        valid &= world.getBlockState(bpos.up(2)).isAir();
 
-        return canSpawnOnBlock(world, pos.add(0, -1, 0)) &&
-                world.getBlockState(pos.add(0, 0, 0)).isOf(Blocks.AIR) &&
-                world.getBlockState(pos.add(0, 1, 0)).isOf(Blocks.AIR) &&
-                world.getBlockState(pos.add(0, 2, 0)).isOf(Blocks.AIR) &&
-                world.getLightLevel(LightType.BLOCK, pos) < 3;
+        if (valid) {
+            angel.setPosition(bpos.getX()+.5, bpos.getY(),bpos.getZ()+.5);
+            if (Utils.canPlayerSeeEntity(player,angel))
+                return false;
+        }
+
+        return valid;
     }
 
     @Nullable
-    private BlockPos findRandomSpawnPos() {
+    private boolean findRandomSpawnPos(WeepingAngelEntity angel) {
         BlockPos origin = new BlockPos(player.getBlockPos());
         BlockPos pos;
 
@@ -79,54 +89,87 @@ public class WeepingAngelParactivity extends Paractivity {
             );
 
             for (int j = 0; j < SPAWN_MAX_Y_OFFSET *2; j++) {
-                pos = pos.add(0,j,0);
-                if (isValidPos(pos))
-                    return pos;
+                if (isValidPos(angel, pos.up(j)))
+                    return true;
             }
         }
 
-        return null;
+        return false;
     }
 
     @Override
     protected ParaResult customInit() {
-        if (!Utils.isNightTimeEnoughFor(world, 30))
-            return ParaResult.fail("not night time");
+        if (!Utils.isNightTimeEnoughFor(world, 180))
+            return ParaResult.fail("not night time or not enough night left");
 
-        foundAngels = world.getOtherEntities(player, new Box(player.getBlockPos()).expand(SEARCH_RANGE), ent -> ent instanceof WeepingAngelEntity).size();
-        if (foundAngels >= MAX_EXISTING_ANGELS)
-            return ParaResult.fail("too many angels nearby (" + foundAngels + ")");
+        // Check how many angels are already present nearby
+        angels = world.getOtherEntities(player, new Box(player.getBlockPos()).expand(SEARCH_RANGE), ent -> ent instanceof WeepingAngelEntity);
+        if (angels.size() >= MAX_EXISTING_ANGELS)
+            return ParaResult.fail("too many angels nearby (" + angels.size() + ")");
 
+        return ParaResult.success();
+    }
+
+    private ParaResult spawnAngels() {
+        // How many to spawn accounting for others that we have found
+        int spawnCount = RANDOM.nextInt(MIN_TO_SPAWN, MAX_TO_SPAWN);
+        if (spawnCount+ angels.size() > MAX_EXISTING_ANGELS)
+            spawnCount = MAX_EXISTING_ANGELS - angels.size();
+
+        angels.clear(); // From here this stores the angles of this activity, not the others found
+        int spawned = 0;
+
+        for (int i = 0; i < spawnCount; i++) {
+
+
+            WeepingAngelEntity e = new WeepingAngelEntity(MortisomniaEntities.WEEPING_ANGEL,world);
+            if (!findRandomSpawnPos(e)) {
+                e.discard();
+            } else {
+                float yaw = RANDOM.nextInt(8)*45;
+                e.setYaw(yaw);
+                e.setHeadYaw(yaw);
+                world.spawnEntity(e);
+                angels.add(e);
+                spawned++;
+            }
+        }
+        if (spawned == 0) {
+            cancel();
+            return ParaResult.fail("Could not spawn any angels");
+        }
+        this.phase++;
         return ParaResult.success();
     }
 
     @Override
     public ParaResult tick() {
+        if (this.phase == PHASE_SPAWN)
+            return spawnAngels();
 
-        int spawnCount = RANDOM.nextInt(MIN_TO_SPAWN, MAX_TO_SPAWN);
-        if (spawnCount+foundAngels > MAX_EXISTING_ANGELS)
-            spawnCount = MAX_EXISTING_ANGELS - foundAngels;
-        int actual = 0;
-
-        for (int i = 0; i < spawnCount; i++) {
-
-            BlockPos pos = findRandomSpawnPos();
-            if (pos == null) continue;
-
-            WeepingAngelEntity e = new WeepingAngelEntity(MortisomniaEntities.WEEPING_ANGEL,world);
-
-            e.setPosition(Vec3d.of(pos).add(.5,0,.5));
-            e.setAngelYaw(RANDOM.nextInt(8)*45);
-            world.spawnEntity(e);
-
-            actual++;
-        }
-        if (actual == 0) {
-            cancel();
-            return ParaResult.fail("Could not spawn any angels");
+        // Remove dead angels
+        var it = angels.listIterator();
+        WeepingAngelEntity angel;
+        while (it.hasNext()) {
+            angel = (WeepingAngelEntity) it.next();
+            if (angel.isDead() || angel.isRemoved()) it.remove();
         }
 
-        return ParaResult.end();
+        if (angels.isEmpty())
+            return ParaResult.end("No angels left");
+
+
+        return ParaResult.success();
     }
 
+    @Override
+    public boolean permitsParactivity(Paractivity other) {
+        return !(other instanceof WeepingAngelParactivity); // Only one can happen at once
+    }
+
+    @Override
+    public void cancel() {
+        for (var angel : angels) angel.kill();
+        super.cancel();
+    }
 }

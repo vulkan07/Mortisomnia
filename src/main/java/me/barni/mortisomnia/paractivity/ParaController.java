@@ -2,7 +2,6 @@ package me.barni.mortisomnia.paractivity;
 
 import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
-import me.barni.mortisomnia.paractivity.activities.*;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.entity.player.PlayerEntity;
@@ -174,7 +173,10 @@ public class ParaController {
                 continue; // prevent double remove (when an activity calls cancel then returns FAIL
             }
             if (activity.isFinished() || result.getType() == ParaResult.Type.FINISHED) {
-                Mortisomnia.LOGGER.info("[ParaController] {} ended", activity.getName());
+                if (result.getMessage().isEmpty())
+                    Mortisomnia.LOGGER.info("[ParaController] {} ended", activity.getName());
+                else
+                    Mortisomnia.LOGGER.info("[ParaController] {} ended: {}", activity.getName(), result.getMessage());
                 iterator.remove();
             }
         }
@@ -211,18 +213,11 @@ public class ParaController {
                         // Add random paractivity
                         Paractivity a = null;
                         int choice = RANDOM.nextInt(100);
-                        switch (choice) {
-                            case 0 -> a = new SpookSoundParactivity(player);
-                            case 1 -> a = new DoorParactivity(player);
-                            case 2 -> a = new DoorToggleParactivity(player);
-                            case 3 -> a = new TorchOffParactivity(player);
-                            case 4 -> a = new ScareCrowParactivity(player);
-                            case 5 -> a = new WeepingAngelParactivity(player);
-                            case 6 -> a = new LightExtinguishParactivity(player);
-                            case 7 -> a = new LightFlickerParactivity(player);
-                            case 8 -> a = new KillFoliageParactivity(player);
-                            case 9 -> a = new CaveSpookParactivity(player);
-                        }
+
+                        // TODO not naturally occurring activities also happen!!! (e.g. capturedLight)
+                        if (choice < Paractivities.getActivityNames().size())
+                            a = Paractivities.REGISTRY.get(choice).create(player);
+
                         if (a != null)
                             addHandledParactivity(a, false, true);
 

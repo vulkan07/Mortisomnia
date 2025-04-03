@@ -8,7 +8,6 @@ import net.minecraft.client.render.entity.model.SinglePartEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 
-import static me.barni.mortisomnia.entity.WeepingAngelEntity.Pose.Crying;
 
 // Made with Blockbench 4.9.0
 // Exported for Minecraft version 1.17+ for Yarn
@@ -68,21 +67,17 @@ public class WeepingAngelModel<T extends WeepingAngelEntity> extends SinglePartE
     @Override
     public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
 
-        //head.resetTransform();
+        body.resetTransform();
+        head.resetTransform();
         l_arm.resetTransform();
         r_arm.resetTransform();
         l_wing.resetTransform();
         r_wing.resetTransform();
 
         // Move head only if not crying
-        if (entity.getAngelPose() != Crying) {
-            head.pitch = (float) Math.toRadians(MathHelper.clamp(headYaw, -80.0F, 80.0F));
-            head.yaw = (float) Math.toRadians(MathHelper.clamp(headPitch, -25.0F, 80.0F));
-
-        }
 
         switch (entity.getAngelPose()) {
-            case Crying -> {
+            case WeepingAngelEntity.POSE_WEEPING -> {
                 head.pitch = (float) Math.toRadians(30);
                 l_arm.pitch = (float) Math.toRadians(-103);
                 l_arm.yaw = (float) Math.toRadians(30);
@@ -93,22 +88,30 @@ public class WeepingAngelModel<T extends WeepingAngelEntity> extends SinglePartE
                 l_wing.roll = (float) Math.toRadians(6);
                 r_wing.roll = (float) Math.toRadians(-6);
             }
-            case Looking -> {
-                l_arm.pitch = (float) Math.toRadians(-20);
-                l_arm.yaw = (float) Math.toRadians(10);
+            case WeepingAngelEntity.POSE_LOOKING -> {
+                head.yaw = (float) Math.toRadians(MathHelper.clamp(headYaw, -93.0F, 93.0F));
+                head.pitch = (float) Math.toRadians(MathHelper.clamp(headPitch, -40.0F, 80.0F));
 
-                r_arm.pitch = (float) Math.toRadians(-20);
-                r_arm.yaw = (float) Math.toRadians(-10);
+                l_arm.pitch = (float) Math.toRadians(-2);
+                l_arm.yaw = (float) Math.toRadians(6);
+
+                r_arm.pitch = (float) Math.toRadians(-2);
+                r_arm.yaw = (float) Math.toRadians(-6);
+
+                l_wing.roll = (float) Math.toRadians(-12);
+                r_wing.roll = (float) Math.toRadians(12);
             }
-            case Attacking -> {
-                l_arm.pitch = (float) Math.toRadians(-90);
-                r_arm.pitch = (float) Math.toRadians(-90);
+            case WeepingAngelEntity.POSE_ATTACKING -> {
+                l_arm.pitch = (float) Math.toRadians(-83);
+                r_arm.pitch = (float) Math.toRadians(-80);
 
                 r_wing.roll = (float) Math.toRadians(120);
                 l_wing.roll = (float) Math.toRadians(-120);
 
                 l_wing.pitch = (float) Math.toRadians(25);
                 r_wing.pitch = (float) Math.toRadians(25);
+                body.yaw = (float) Math.toRadians(headYaw);
+                head.pitch = (float) Math.toRadians(MathHelper.clamp(headPitch, -40.0F, 80.0F));
             }
         }
     }

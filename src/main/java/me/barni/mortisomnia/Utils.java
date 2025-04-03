@@ -5,6 +5,7 @@ import me.barni.mortisomnia.datagen.MortisomniaBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.BlockTags;
@@ -32,6 +33,11 @@ public abstract class Utils {
         return world.getMoonPhase()==0;
     }
 
+    public static boolean isPlayerCandidate(PlayerEntity p) {
+//        return p != null && !p.isRemoved() && !p.isDead() && !p.isCreative() && !p.isSpectator();
+        return p != null && !p.isRemoved() && !p.isDead() && !p.isSpectator();
+    }
+
     public static NbtCompound getPlayerPersistentData(PlayerEntity player) {
         return ((IEntityNBTSaver) player).mortisomnia$getPersistentData();
     }
@@ -56,40 +62,79 @@ public abstract class Utils {
         return new Vec3d(x,y,z);
     }
 
+    public static boolean isCompletelyInDark(PlayerEntity player, BlockPos[] destination) {
+        for (var pos : destination) {
+            if (player.getWorld().getLightLevel(LightType.SKY,pos) != 0) return false;
+            if (player.getWorld().getLightLevel(LightType.BLOCK,pos) != 0) return false;
+        }
+        if (player.getStatusEffect(StatusEffects.DARKNESS) != null)
+            return false;
+
+        return true;
+    }
+
+    public static boolean canAnyPlayersSeeEntity(World w, Entity e) {
+        for (var p : w.getPlayers()) {
+            if (canPlayerSeeEntity(p,e)) return true;
+        }
+        return false;
+    }
     public static boolean canPlayerSeeEntity(PlayerEntity e1, Entity e2) {
         if (e1.getWorld() != e2.getWorld())
             return false;
 
         float dist = e1.distanceTo(e2);
-
         if (dist > 96.0)
             return false;
 
-        double angleH = (Math.toDegrees(Math.atan2(e2.getZ() - e1.getZ(), e2.getX() - e1.getX())) -e1.getYaw() + 360) % 360;
-        int angleCorrection = dist < 1 ? 10 : 0; // if entity is closer than 1, 'shrink' acceptably FOV
-        if ((angleH < 350 - angleCorrection && angleH > 190 + angleCorrection) && e1.getPitch() < 50 && e1.getPitch() > -50)
-            return false;
+        if (e1.isSpectator()) return false;
+        if (e1.isDead()) return false;
+        if (e1.isRemoved()) return false;
 
+        // If player is in darkness; NOTE: this relies on the renderer not using any added lighting
+        if (!e1.getActiveStatusEffects().containsKey(StatusEffects.NIGHT_VISION)
+            && e2.getWorld().getLightLevel(LightType.SKY, e2.getBlockPos()) == 0
+            && e2.getWorld().getLightLevel(LightType.BLOCK, e2.getBlockPos()) == 0
+        ) return false;
+
+        Vec3d toEntity = e2.getPos().subtract(e1.getPos()).normalize();
+        var lookVec = e1.getRotationVec(1f);
+        double dot = lookVec.dotProduct(toEntity); // Dot product gives the cosine of the angle
+
+        double fov = Math.toRadians(170); // Example: 70° field of view
+        if (e2.squaredDistanceTo(e1) < 3*3) {
+            fov = Math.toRadians(220); // Example: 70° field of view
+        }
+        double cosFov = Math.cos(fov / 2);
+        if (dot <= cosFov) {
+            return false;
+        }
+        var box = e2.getVisibilityBoundingBox();
         Vec3d[] eyeSpots = {
-                e2.getPos().add(-.5, 0,  .5),
-                e2.getPos().add( .5, 0, -.5),
-                e2.getPos().add(-.5, 0, -.5),
-                e2.getPos().add( .5, 0,  .5),
-                e2.getPos().add( 0, e2.getHeight()/2,  0),
-                e2.getPos().add(-.5, e2.getHeight(),  .5),
-                e2.getPos().add( .5, e2.getHeight(), -.5),
-                e2.getPos().add(-.5, e2.getHeight(), -.5),
-                e2.getPos().add( .5, e2.getHeight(),  .5),
+                box.getCenter(),
+                box.getBottomCenter().add(0,box.getLengthY()*3/4,0),
+                box.getBottomCenter().add(0,box.getLengthY()/4,0),/*
+                new Vec3d(box.minX, box.maxY-box.getLengthY()/2,  box.minZ),
+                new Vec3d(box.minX, box.maxY-box.getLengthY()/2,  box.maxZ),
+                new Vec3d(box.maxX, box.maxY-box.getLengthY()/2,  box.maxZ),
+                new Vec3d(box.maxX, box.maxY-box.getLengthY()/2,  box.minZ),*/
+                new Vec3d(box.minX, box.minY,  box.minZ),
+                new Vec3d(box.minX, box.minY,  box.maxZ),
+                new Vec3d(box.maxX, box.minY,  box.minZ),
+                new Vec3d(box.maxX, box.minY,  box.maxZ),
+                new Vec3d(box.minX, box.maxY,  box.minZ),
+                new Vec3d(box.minX, box.maxY,  box.maxZ),
+                new Vec3d(box.maxX, box.maxY,  box.minZ),
+                new Vec3d(box.maxX, box.maxY,  box.maxZ),
         };
 
         for (Vec3d pos : eyeSpots) {
             BlockHitResult hitResult = e1.getWorld().raycast(new RaycastContext(e1.getEyePos(), pos, RaycastContext.ShapeType.COLLIDER,
                     RaycastContext.FluidHandling.NONE, e1));
-
             if (hitResult.getType() == HitResult.Type.MISS)
                 return true;
             if (hitResult.getType() == HitResult.Type.BLOCK)
-                if (!e1.getWorld().getBlockState(hitResult.getBlockPos()).isOpaque())
+                if (!e1.getWorld().getBlockState(hitResult.getBlockPos()).isSideSolidFullSquare(e2.getWorld(),hitResult.getBlockPos(),hitResult.getSide()))
                     return true;
         }
         return false;

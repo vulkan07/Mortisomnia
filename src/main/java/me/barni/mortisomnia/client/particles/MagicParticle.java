@@ -30,7 +30,7 @@ public class MagicParticle extends SpriteBillboardParticle {
         this.rz = (random.nextFloat()-0.5)/40.0;
         this.phase = Math.toRadians(motionY);
         this.alpha = 0f;
-        this.scale = 0.1f * (this.random.nextFloat()+0.f) * 2.0f;
+        this.scale = (this.random.nextFloat()) * 0.22f;
 
         this.maxAge = 150;
         this.collidesWithWorld = false;

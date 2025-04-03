@@ -22,8 +22,7 @@ public class PlagueDoctorRenderer extends LivingEntityRenderer<PlagueDoctorEntit
         return Identifier.of(Mortisomnia.MOD_ID, "textures/entity/plague_doctor.png");
     }
 
+
     @Override
-    protected boolean hasLabel(PlagueDoctorEntity livingEntity) {
-        return false;
-    }
+    protected boolean hasLabel(PlagueDoctorEntity entity) { return entity.isCustomNameVisible(); }
 }
