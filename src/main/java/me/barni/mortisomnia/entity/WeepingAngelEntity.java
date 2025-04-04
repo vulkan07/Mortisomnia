@@ -96,8 +96,7 @@ public class WeepingAngelEntity extends LivingEntity {
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         nbt.putByte("Variant", dataTracker.get(VARIANT));
-        nbt.putByte("AngelPose", dataTracker.get(POSE));
-        ai.save(nbt);
+        ai.save(nbt); // Angel pose is set by the AI's phase so it's not saved separately
     }
 
     @Override
@@ -106,8 +105,6 @@ public class WeepingAngelEntity extends LivingEntity {
         try {
             if (nbt.contains("Variant"))
                 dataTracker.set(VARIANT, nbt.getByte("Variant"));
-            if (nbt.contains("AngelPose"))
-                dataTracker.set(POSE, nbt.getByte("AngelPose"));
             ai.load(nbt);
 
         } catch (Exception e) {

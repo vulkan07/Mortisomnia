@@ -80,8 +80,8 @@ public abstract class Utils {
         return false;
     }
     public static boolean canPlayerSeeEntity(PlayerEntity e1, Entity e2) {
-        if (e1.getWorld() != e2.getWorld())
-            return false;
+        if (e1 == null || e2 == null) return false;
+        if (e1.getWorld() != e2.getWorld()) return false;
 
         float dist = e1.distanceTo(e2);
         if (dist > 96.0)
@@ -510,9 +510,14 @@ public abstract class Utils {
     public static class BlockScanner {
         private final BlockPos.Mutable pos = new BlockPos.Mutable();
         private int index;
-        private final int startX, startY, startZ, endX, endY, endZ, lenX, lenY, lenZ, lenTotal;
+        private int startX, startY, startZ, endX, endY, endZ, lenX, lenY, lenZ, lenTotal;
 
         public BlockScanner(Box box) {
+            setBox(box);
+        }
+
+        public void setBox(Box box) { // Can be dynamically updated by e.g. Weeping Angel
+            index = 0;
             startX = (int) box.minX;
             startY = (int) box.minY;
             startZ = (int) box.minZ;
@@ -531,6 +536,9 @@ public abstract class Utils {
         }
         public int getIndex() {
             return index;
+        }
+        public void reset() {
+            index = 0;
         }
 
         public boolean hasNext() {

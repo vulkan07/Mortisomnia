@@ -25,7 +25,7 @@ public class LightFlickerParactivity extends Paractivity {
 
     private final int FLICKERS_PER_TICK = 8;
     private final int FLICKER_DURATION = 15*20; // 10 seconds
-    private final int MIN_LIGHT_BLOCKS = 40; // if number of found blocks is less than this, cancel event
+    private final int MIN_LIGHT_BLOCKS = 10; // if number of found blocks is less than this, cancel event
     private final int MAX_SCAN_PER_TICK = 32000;
     private final int SCAN_VERTICAL = 24; // goes in both direcctions, so x will scan 2x+1 blocks
     private final int SCAN_HORIZONTAL = 64; // goes in both direcctions, so x will scan 2x+1 blocks
