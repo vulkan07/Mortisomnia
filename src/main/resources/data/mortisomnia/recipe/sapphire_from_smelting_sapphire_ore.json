@@ -3,9 +3,7 @@
   "category": "misc",
   "cookingtime": 200,
   "experience": 1,
-  "ingredient": {
-    "item": "mortisomnia:sapphire_ore"
-  },
+  "ingredient": "mortisomnia:sapphire_ore",
   "result": {
     "id": "mortisomnia:sapphire"
   }

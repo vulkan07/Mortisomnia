@@ -36,8 +36,8 @@ public class EntityNBTSaveMixin implements IEntityNBTSaver {
 
     @Inject(method = "readNbt", at = @At("HEAD"))
     protected void injectReadMethod(NbtCompound nbt, CallbackInfo info) {
-        if (nbt.contains(KEY, 10)) {
-            persistentData = nbt.getCompound(KEY);
+        if (nbt.contains(KEY)) {
+            persistentData = nbt.getCompound(KEY).get();
         }
     }
 }

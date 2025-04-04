@@ -104,7 +104,7 @@ public class WeepingAngelEntity extends LivingEntity {
         super.readCustomDataFromNbt(nbt);
         try {
             if (nbt.contains("Variant"))
-                dataTracker.set(VARIANT, nbt.getByte("Variant"));
+                dataTracker.set(VARIANT, nbt.getByte("Variant").get());
             ai.load(nbt);
 
         } catch (Exception e) {
@@ -126,7 +126,7 @@ public class WeepingAngelEntity extends LivingEntity {
     }
 
     @Override
-    public boolean damage(DamageSource damageSource, float amount) {
+    public boolean damage(ServerWorld world, DamageSource damageSource, float amount) {
         if (    damageSource.isOf(DamageTypes.PLAYER_ATTACK) ||
                 damageSource.isOf(DamageTypes.PLAYER_EXPLOSION) ||
                 damageSource.isOf(DamageTypes.GENERIC_KILL) ||
@@ -143,7 +143,7 @@ public class WeepingAngelEntity extends LivingEntity {
                     }
                 }
             }
-            return super.damage(damageSource, amount);
+            return super.damage(world, damageSource, amount);
         }
         else return false;
     }
@@ -181,13 +181,12 @@ public class WeepingAngelEntity extends LivingEntity {
     }
     public static DefaultAttributeContainer.Builder createWeepingAngelAttributes() {
         return MobEntity.createMobAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, 100)
-            .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, .92f);
+            .add(EntityAttributes.MAX_HEALTH, 100)
+            .add(EntityAttributes.KNOCKBACK_RESISTANCE, .92f);
     }
     @Override protected SoundEvent getHurtSound(DamageSource source) { return SoundEvents.BLOCK_GILDED_BLACKSTONE_STEP; }
     @Override protected SoundEvent getDeathSound() { return SoundEvents.BLOCK_DEEPSLATE_BREAK; }
     @Override public Arm getMainArm() { return null; }
-    @Override public Iterable<ItemStack> getArmorItems() { return null; }
     @Override public ItemStack getEquippedStack(EquipmentSlot slot) { return stack; }
     @Override public void equipStack(EquipmentSlot slot, ItemStack stack) { }
     @Override protected void playStepSound(BlockPos pos, BlockState state) { /* do nothing */ }
@@ -195,6 +194,6 @@ public class WeepingAngelEntity extends LivingEntity {
     @Override public boolean collidesWith(Entity other) { return true; }
     @Override public boolean isCollidable() { return true; }
     @Override protected boolean canStartRiding(Entity entity) { return false; }
-    @Override public int getXpToDrop() { return ai.getPhase()*3+ai.getAggression()+3; }
+    @Override protected int getExperienceToDrop(ServerWorld world) { return ai.getPhase()*3+ai.getAggression()+3; }
     @Override public boolean doesRenderOnFire() { return false; }
 }

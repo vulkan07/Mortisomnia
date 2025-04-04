@@ -42,10 +42,10 @@ public class MagicParticle extends SpriteBillboardParticle {
 
     @Override
     public void tick() {
-        this.prevPosX = this.x;
-        this.prevPosY = this.y;
-        this.prevPosZ = this.z;
-        this.prevAngle = this.angle;
+        this.lastX = this.x;
+        this.lastY = this.y;
+        this.lastZ = this.z;
+        this.lastAngle = this.angle;
         this.y += this.velocityY;
         if (this.age++ >= this.maxAge) {
             this.markDead();
@@ -65,8 +65,8 @@ public class MagicParticle extends SpriteBillboardParticle {
             this.nx += rx;
             this.nz += rz;
             if (this.collidesWithWorld) {
-                Vec3d p = new Vec3d(x - prevPosX, y - prevPosY, z - prevPosZ);
-                Vec3d vec3d = Entity.adjustMovementForCollisions(null, new Vec3d(x - prevPosX, y - prevPosY, z - prevPosZ), this.getBoundingBox(), this.world, List.of());
+                Vec3d p = new Vec3d(x - lastX, y - lastY, z - lastZ);
+                Vec3d vec3d = Entity.adjustMovementForCollisions(null, new Vec3d(x - lastX, y - lastY, z - lastZ), this.getBoundingBox(), this.world, List.of());
                 float f = this.spacingXZ / 2.0f;
                 float g = this.spacingY;
                 this.setBoundingBox(new Box(x - (double) f, y, z - (double) f, x + (double) f, y + (double) g, z + (double) f));

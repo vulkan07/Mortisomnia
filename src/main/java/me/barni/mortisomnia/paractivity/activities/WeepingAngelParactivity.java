@@ -11,6 +11,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -169,7 +170,7 @@ public class WeepingAngelParactivity extends Paractivity {
 
     @Override
     public void cancel() {
-        for (var angel : angels) angel.kill();
+        for (var angel : angels) angel.kill((ServerWorld) world); //TODO unholy
         super.cancel();
     }
 }

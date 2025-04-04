@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EntityNBTSaveMixin",
-    "SheepShearDropMixin",
     "TrapdoorBlockInvoker"
   ],
   "client": [

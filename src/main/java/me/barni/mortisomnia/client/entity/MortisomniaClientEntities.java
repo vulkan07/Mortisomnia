@@ -1,8 +1,5 @@
-package me.barni.mortisomnia.client.entities;
+package me.barni.mortisomnia.client.entity;
 
-import me.barni.mortisomnia.entity.GazerModel;
-import me.barni.mortisomnia.entity.PlagueDoctorModel;
-import me.barni.mortisomnia.entity.WeepingAngelModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;

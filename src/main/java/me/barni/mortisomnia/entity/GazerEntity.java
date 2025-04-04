@@ -89,12 +89,12 @@ public class GazerEntity extends MobEntity {
 
 
     @Override
-    public boolean damage(DamageSource damageSource, float amount) {
+    public boolean damage(ServerWorld world, DamageSource damageSource, float amount) {
         triggered = true;
-        return super.damage(damageSource,amount);
+        return super.damage(world,damageSource,amount);
     }
     @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
+    public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {
         return !damageSource.isOf(DamageTypes.GENERIC_KILL);
     }
 
@@ -103,7 +103,7 @@ public class GazerEntity extends MobEntity {
     }
 
     public static DefaultAttributeContainer.Builder createGazerAttributes() {
-        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20);
+        return MobEntity.createMobAttributes().add(EntityAttributes.MAX_HEALTH, 20);
     }
 
     @Override

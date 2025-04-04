@@ -258,7 +258,7 @@ public class ParaController {
             Mortisomnia.LOGGER.error("[ParaController] Tried getting Haunt on CLIENT");
             return -6969;
         }
-        return Utils.getPlayerPersistentData(player).getInt("haunt");
+        return Utils.getPlayerPersistentData(player).getInt("haunt").orElse(0);
     }
 
 }

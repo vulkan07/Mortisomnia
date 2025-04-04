@@ -109,15 +109,11 @@ public abstract class Utils {
         if (dot <= cosFov) {
             return false;
         }
-        var box = e2.getVisibilityBoundingBox();
+        var box = e2.getBoundingBox();
         Vec3d[] eyeSpots = {
                 box.getCenter(),
-                box.getBottomCenter().add(0,box.getLengthY()*3/4,0),
-                box.getBottomCenter().add(0,box.getLengthY()/4,0),/*
-                new Vec3d(box.minX, box.maxY-box.getLengthY()/2,  box.minZ),
-                new Vec3d(box.minX, box.maxY-box.getLengthY()/2,  box.maxZ),
-                new Vec3d(box.maxX, box.maxY-box.getLengthY()/2,  box.maxZ),
-                new Vec3d(box.maxX, box.maxY-box.getLengthY()/2,  box.minZ),*/
+                box.getCenter().add(0,box.getLengthY()/4,0),
+                box.getCenter().add(0,-box.getLengthY()/4,0),
                 new Vec3d(box.minX, box.minY,  box.minZ),
                 new Vec3d(box.minX, box.minY,  box.maxZ),
                 new Vec3d(box.maxX, box.minY,  box.minZ),

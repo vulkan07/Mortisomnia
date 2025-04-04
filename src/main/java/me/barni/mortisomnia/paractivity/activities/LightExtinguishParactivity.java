@@ -1,6 +1,5 @@
 package me.barni.mortisomnia.paractivity.activities;
 
-import me.barni.mortisomnia.Mortisomnia;
 import me.barni.mortisomnia.Utils;
 import me.barni.mortisomnia.datagen.MortisomniaSounds;
 import me.barni.mortisomnia.paractivity.ParaController;
@@ -43,7 +42,6 @@ public class LightExtinguishParactivity extends Paractivity {
         for (int i = 0; i < MAX_SCAN_PER_TICK; i++) {
             var pos = blockScanner.getNextPos();
             if (pos == null) { // scan ended
-                Mortisomnia.LOGGER.error("found {} lights!!", lightBlockStack.size());
                 if (lightBlockStack.size() < MIN_LIGHT_BLOCKS) {
                     cancel();
                 }

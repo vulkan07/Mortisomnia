@@ -33,10 +33,6 @@ public class PlagueDoctorEntity extends LivingEntity {
     }
 
     @Override
-    public Iterable<ItemStack> getArmorItems() {
-        return null;
-    }
-    @Override
     public ItemStack getEquippedStack(EquipmentSlot slot) {
         return stack;
     }
@@ -50,17 +46,17 @@ public class PlagueDoctorEntity extends LivingEntity {
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount) {
+    public boolean damage(ServerWorld world, DamageSource source, float amount) {
         var attacker = source.getAttacker();
         if (attacker instanceof PlayerEntity) {
-            attacker.damage(attacker.getWorld().getDamageSources().mobAttack(this), 15);
+            attacker.damage(world,attacker.getWorld().getDamageSources().mobAttack(this), 15);
         }
         this.triggered = !triggered;
-        return super.damage(source,amount);
+        return super.damage(world,source,amount);
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
+    public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {
         return !damageSource.isOf(DamageTypes.GENERIC_KILL);
     }
 

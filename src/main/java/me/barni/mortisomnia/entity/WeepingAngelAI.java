@@ -7,6 +7,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -34,6 +35,7 @@ public class WeepingAngelAI {
 
     private PlayerEntity targetPlayer;
     private final WeepingAngelEntity angel;
+    private final World world;
 
     public boolean pendingLook = false; // set true to make angel look at player as soon as it is not seen
     private int phase; // Determines AI behavior
@@ -83,6 +85,7 @@ public class WeepingAngelAI {
 
     public WeepingAngelAI(WeepingAngelEntity entity) {
         this.angel = entity;
+        this.world = angel.getWorld();
         this.blockScanner = new Utils.BlockScanner(angel.getBoundingBox().expand(H_SCAN,V_SCAN,H_SCAN));
         this.phase = PHASE_WARMUP;
     }
@@ -92,11 +95,11 @@ public class WeepingAngelAI {
     }
     public void load(NbtCompound nbt) {
         if (nbt.contains("Phase")) {
-            this.phase = Math.min(nbt.getInt("Phase"), PHASE_ATTACK);
+            this.phase = Math.min(nbt.getInt("Phase").get(), PHASE_ATTACK);
             setAngelPose();
         }
         if (nbt.contains("Aggression")) {
-            this.aggression = Math.min(nbt.getInt("Aggression"), MAX_AGGRESSION);
+            this.aggression = Math.min(nbt.getInt("Aggression").get(), MAX_AGGRESSION);
         }
     }
 
@@ -128,12 +131,12 @@ public class WeepingAngelAI {
         BlockPos bpos = new BlockPos(Math.round((float)targetPos.x-.5f), (int)targetPos.y, Math.round((float)targetPos.z-.5f));
 
         for (int y = VERTICAL_RANGE /2; y > -VERTICAL_RANGE /2; y--)
-            if (isValidPos(angel.getWorld(), bpos.up(y))) {
+            if (isValidPos(world, bpos.up(y))) {
                 moveAngel(bpos.up(y));
                 return;
             }
         for (int y = VERTICAL_RANGE; y > -VERTICAL_RANGE; y--)
-            if (isValidPos(angel.getWorld(), bpos.up(y))) {
+            if (isValidPos(world, bpos.up(y))) {
                 moveAngel(bpos.up(y));
                 return;
             }
@@ -161,7 +164,7 @@ public class WeepingAngelAI {
             float minDist = Float.POSITIVE_INFINITY;
             float d;
             this.targetPlayer = null;
-            for (var p : angel.getWorld().getPlayers()) {
+            for (var p : world.getPlayers()) {
                 if (!Utils.isPlayerCandidate(p))
                     continue;
                 d = (float) angel.squaredDistanceTo(p);
@@ -179,7 +182,7 @@ public class WeepingAngelAI {
         if (!Utils.isPlayerCandidate(this.targetPlayer)) return false;
 
         if (targetPlayer.getPos().distanceTo(angel.getPos()) < 1.25) {
-            boolean damaged = targetPlayer.damage(angel.getWorld().getDamageSources().mobAttack(angel), RANDOM.nextInt(15, 18));
+            boolean damaged = targetPlayer.damage((ServerWorld) world, world.getDamageSources().mobAttack(angel), RANDOM.nextInt(15, 18));
             if (targetPlayer.isDead()) angel.discard(); // Despawn the Angel if killed the player
             return damaged;
         }
@@ -228,24 +231,24 @@ public class WeepingAngelAI {
                         break;
                     }
                     pos = blockScanner.getNextPos();
-                    if (isValidLightBlock(angel.getWorld().getBlockState(pos)))
+                    if (isValidLightBlock(world.getBlockState(pos)))
                         lights.push(new BlockPos(pos));
                 }
 
             }
         }
 
-        if (updateTimer.tick() && angel.getWorld().isNight()) { // Only progress anything at night
+        if (updateTimer.tick() && world.isNight()) { // Only progress anything at night
             if (phaseTimer.tick()) incrementPhase(); // AI progresses without a suitable player!
 
             updatePlayer(); // select who is targeted
 
             if (!Utils.isPlayerCandidate(this.targetPlayer)) return;
-            if (Utils.canAnyPlayersSeeEntity(angel.getWorld(), angel)) {
+            if (Utils.canAnyPlayersSeeEntity(world, angel)) {
                 if (!lights.isEmpty()) {
                     BlockPos pos;
                     pos = lights.pop();
-                    Utils.unlightBlock(angel.getWorld(), pos, true, false, true);
+                    Utils.unlightBlock(world, pos, true, false, true);
                 }
                 return;
             }

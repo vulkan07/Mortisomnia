@@ -1,15 +1,11 @@
 package me.barni.mortisomnia.client;
 
-import me.barni.mortisomnia.client.entities.MortisomniaClientEntities;
+import me.barni.mortisomnia.client.entity.MortisomniaClientEntities;
 import me.barni.mortisomnia.datagen.MortisomniaBlocks;
 import me.barni.mortisomnia.datagen.MortisomniaParticles;
-import me.barni.mortisomnia.mixin.GameRendererSetPostProcessorMixin;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Identifier;
 
 @Environment(value=EnvType.CLIENT)
 public class MortisomniaClient implements ClientModInitializer {
@@ -21,19 +17,23 @@ public class MortisomniaClient implements ClientModInitializer {
         MortisomniaBlocks.clientRegisterBlocks();
         MortisomniaParticles.clientRegisterParticles();
         MortisomniaClientEntities.registerClientEntities();
+        /* TODO
         WorldRenderEvents.END.register(context -> {
-            var processor = context.gameRenderer().getPostProcessor();
+            var processor = context.gameRenderer().getPostProcessorId();
+
             var world = context.world();
             if (processor == null)
                 ((GameRendererSetPostProcessorMixin) context.gameRenderer()).invokeLoadPostProcessor(
                         Identifier.ofVanilla("shaders/post/plague.json")); //TODO move to mod's namespace
             if (processor != null && world != null) {
                 processor.setUniforms("time", this.time);
-                this.time += context.tickCounter().getTickDelta(true)*0.01f;
+                this.time += context.tickCounter().getTickProgress(true)*0.01f;
                 processor.setUniforms("Height", (float) MinecraftClient.getInstance().player.getY());
             }
                 //Identifier.of(Mortisomnia.MOD_ID, "shaders/post/plague.json"));
         });
+
+         */
 
 
         /*

@@ -13,10 +13,12 @@ import me.barni.mortisomnia.paractivity.*;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -75,11 +77,11 @@ public class ParactivityCommand {
     }
 
     private static String add(PlayerEntity player, String name, boolean force) {
-        ParactivityFactory factory = Paractivities.REGISTRY.get(Identifier.of(Mortisomnia.MOD_ID,name));
-        if (factory == null) {
+        Optional<RegistryEntry.Reference<ParactivityFactory>> factory = Paractivities.REGISTRY.getEntry(Identifier.of(Mortisomnia.MOD_ID,name));
+        if (factory.isEmpty()) {
             return "Unknown type: " + name;
         }
-        Paractivity a = factory.create(player);
+        Paractivity a = factory.get().value().create(player);
 
         var result = ParaController.getInstance().addParactivity(a, force, false);
         if (result.getType() == ParaResult.Type.FAIL)
@@ -93,13 +95,13 @@ public class ParactivityCommand {
     private static void query(PlayerEntity player) {
         String[] names = ParaController.getInstance().getCurrentActivitiesNames();
         if (names.length == 0) {
-            player.sendMessage(Text.literal("[ParaController] no activities currently happening"));
+            player.sendMessage(Text.of("[ParaController] no activities currently happening"),false);
             return;
         }
-        player.sendMessage(Text.literal("[ParaController] currently happening activities:"));
+        player.sendMessage(Text.of("[ParaController] currently happening activities:"),false);
         int i = names.length;
         for (String n : names){
-            player.sendMessage(Text.literal("  " + (i) + ". " + n));
+            player.sendMessage(Text.of("  " + (i) + ". " + n),false);
             i--;
         }
     }

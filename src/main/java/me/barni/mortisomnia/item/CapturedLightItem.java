@@ -4,35 +4,27 @@ import me.barni.mortisomnia.datagen.MortisomniaParticles;
 import me.barni.mortisomnia.datagen.MortisomniaSounds;
 import me.barni.mortisomnia.paractivity.ParaController;
 import me.barni.mortisomnia.paractivity.activities.CapturedLightParactivity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.util.ActionResult;
 
 public class CapturedLightItem extends Item {
-    public CapturedLightItem(Settings settings) {
+    public CapturedLightItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
     }
 
-
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        if (!world.isClient()) {
+    public ActionResult useOnBlock(ItemUsageContext context) {
+        var user = context.getPlayer();
+        if (context.getWorld() instanceof ServerWorld serverWorld) {
             CapturedLightParactivity p = new CapturedLightParactivity(user);
 
             if (!ParaController.getInstance().addHandledParactivity(p, false, true)) {
-                return TypedActionResult.fail(user.getStackInHand(hand));
+                return ActionResult.FAIL;
             }
-
-            if (world.isClient()) {
-                return TypedActionResult.pass(user.getStackInHand(hand));
-            }
-            ServerWorld serverWorld = (ServerWorld) world;
             // PARTICLE
             serverWorld.spawnParticles(
                     MortisomniaParticles.ECTOPLASM, user.getPos().x, user.getPos().y+1, user.getPos().z,
@@ -45,9 +37,9 @@ public class CapturedLightItem extends Item {
                     16, 0, 0, 0, .1);
 
             //SOUND
-            world.playSound(null, user.getPos().x, user.getPos().y, user.getPos().z,
+            serverWorld.playSound(null, user.getPos().x, user.getPos().y, user.getPos().z,
                     MortisomniaSounds.SOUL_SFX, SoundCategory.NEUTRAL, .05f, 1.2f);
-            world.playSound(null, user.getPos().x, user.getPos().y, user.getPos().z,
+            serverWorld.playSound(null, user.getPos().x, user.getPos().y, user.getPos().z,
                     MortisomniaSounds.USE_CAPTURED_LIGHT, SoundCategory.NEUTRAL, 1f, 1f);
 /*
             //SHAKE
@@ -55,8 +47,8 @@ public class CapturedLightItem extends Item {
                     PacketByteBufs.create().writeFloat(.35f).writeFloat(.17f).writeFloat(.3f));
 
 */
-            user.getStackInHand(hand).decrementUnlessCreative(1, user);
+            user.getStackInHand(context.getHand()).decrementUnlessCreative(1, user);
         }
-        return TypedActionResult.success(user.getStackInHand(hand));
+        return ActionResult.SUCCESS;
     }
 }
